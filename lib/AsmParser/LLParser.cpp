@@ -5027,6 +5027,7 @@ int LLParser::ParseInstruction(Instruction *&Inst, BasicBlock *BB,
   case lltok::kw_shufflevector:  return ParseShuffleVector(Inst, PFS);
   case lltok::kw_phi:            return ParsePHI(Inst, PFS);
   case lltok::kw_landingpad:     return ParseLandingPad(Inst, PFS);
+  case lltok::kw_ndi:            return ParseNdi(Inst, PFS, KeywordVal);
   // Call.
   case lltok::kw_call:     return ParseCall(Inst, PFS, CallInst::TCK_None);
   case lltok::kw_tail:     return ParseCall(Inst, PFS, CallInst::TCK_Tail);
@@ -6212,6 +6213,24 @@ int LLParser::ParseFence(Instruction *&Inst, PerFunctionState &PFS) {
 
   Inst = new FenceInst(Context, Ordering, Scope);
   return InstNormal;
+}
+
+/// ParseNdiInst
+int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
+                       unsigned Opc) {
+  LocTy Loc; Value *LHS, *RHS;
+  if (ParseTypeAndValue(LHS, Loc, PFS) ||
+      ParseToken(lltok::comma, "expected ',' in arithmetic operation") ||
+      ParseValue(LHS->getType(), RHS, PFS))
+    return true;
+
+  bool Valid = LHS->getType()->isIntOrIntVectorTy();
+
+  if (!Valid)
+    return Error(Loc, "invalid operand type for instruction");
+
+  Inst = new NdiInst(LHS, RHS, LHS->getType());
+  return false;
 }
 
 /// ParseGetElementPtr

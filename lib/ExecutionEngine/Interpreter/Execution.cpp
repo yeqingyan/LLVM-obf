@@ -1812,6 +1812,30 @@ void Interpreter::visitInsertElementInst(InsertElementInst &I) {
   SetValue(&I, Dest, SF);
 }
 
+//===----------------------------------------------------------------------===//
+//                        Misc Instructions
+//===----------------------------------------------------------------------===//
+void Interpreter::visitNdiInst(NdiInst &I) {
+  ExecutionContext &SF = ECStack.back();
+  GenericValue Src1 = getOperandValue(I.getOperand(0), SF);
+  GenericValue Src2 = getOperandValue(I.getOperand(1), SF);
+  GenericValue R;   // Result
+
+  int index = I.getInstructionIndex();
+  switch (index) {
+    case 6: // Instruction::Add
+      R.IntVal = Src1.IntVal + Src2.IntVal;
+      break;
+    case 12: // Instruction:Sub
+      R.IntVal = Src1.IntVal - Src2.IntVal;
+      break;
+    default:
+      llvm_unreachable("Unhandled ndi instruction");
+      break;
+  }
+  SetValue(&I, R, SF);
+}
+
 void Interpreter::visitShuffleVectorInst(ShuffleVectorInst &I){
   ExecutionContext &SF = ECStack.back();
 
@@ -2065,6 +2089,7 @@ GenericValue Interpreter::getOperandValue(Value *V, ExecutionContext &SF) {
     return SF.Values[V];
   }
 }
+
 
 //===----------------------------------------------------------------------===//
 //                        Dispatch and Execution Code

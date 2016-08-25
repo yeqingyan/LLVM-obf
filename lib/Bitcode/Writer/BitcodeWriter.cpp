@@ -2343,6 +2343,7 @@ void ModuleBitcodeWriter::writeInstruction(const Instruction &I,
   unsigned Code = 0;
   unsigned AbbrevToUse = 0;
   VE.setInstructionID(&I);
+
   switch (I.getOpcode()) {
   default:
     if (Instruction::isCast(I.getOpcode())) {
@@ -2639,6 +2640,23 @@ void ModuleBitcodeWriter::writeInstruction(const Instruction &I,
       Vals.push_back(getEncodedSynchScope(cast<StoreInst>(I).getSynchScope()));
     }
     break;
+  case Instruction::Ndi: {
+    Code = bitc::FUNC_CODE_NDI;
+    // TODO Check variable AbbrevToUse usage.
+    pushValueAndType(I.getOperand(0), InstID, Vals);
+//      AbbrevToUse = FUNCTION_INST_BINOP_ABBREV;
+    pushValue(I.getOperand(1), InstID, Vals);
+    Vals.push_back(I.getOpcode());
+    // TODO check Flags usage
+//    uint64_t Flags = getOptimizationFlags(&I);
+//    if (Flags != 0) {
+//      if (AbbrevToUse == FUNCTION_INST_BINOP_ABBREV)
+//        AbbrevToUse = FUNCTION_INST_BINOP_FLAGS_ABBREV;
+//      Vals.push_back(Flags);
+//    }
+    break;
+  }
+
   case Instruction::AtomicCmpXchg:
     Code = bitc::FUNC_CODE_INST_CMPXCHG;
     pushValueAndType(I.getOperand(0), InstID, Vals); // ptrty + ptr

@@ -462,6 +462,7 @@ enum FunctionCodes {
   // 53 is unused.
   // 54 is unused.
   FUNC_CODE_OPERAND_BUNDLE = 55, // OPERAND_BUNDLE: [tag#, value...]
+  FUNC_CODE_NDI = 56, // Non-Deterministic instruction
 };
 
 enum UseListCodes {

@@ -4922,6 +4922,54 @@ public:
   }
 };
 
+//===----------------------------------------------------------------------===//
+//                          NdiInst Class
+//===----------------------------------------------------------------------===//
+
+class NdiInst : public Instruction {
+  void *operator new(size_t, unsigned) = delete;
+  // TODO only obfuscated binary instruction
+//  Instruction *obfuscatedInstruction;
+
+protected:
+  // Note: Instruction needs to be a friend here to call cloneImpl.
+  friend class Instruction;
+
+  NdiInst *cloneImpl() const;
+
+public:
+  void *operator new(size_t s) {
+    return User::operator new(s, 2);
+  }
+
+  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
+          Instruction *InsertBefore = nullptr);
+  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name,
+          BasicBlock *InsertAtEnd);
+
+//  static NdiInst *Create(Instruction *obfuscateInstrunullptr,
+//                         Instruction *InsertBefore = nullptr);
+//
+//  static NdiInst *Create(Instruction *obfuscateInstrunullptr,
+//                         BasicBlock *InsertAtEnd);
+
+  // Transparently provide more efficient getOperand methods.
+  DECLARE_TRANSPARENT_OPERAND_ACCESSORS(Value);
+
+  Instruction* getObfuscatedInstruction() const;
+  int getInstructionIndex();
+  int getInstructionIndex(Instruction *i);
+
+//private:
+};
+
+// TODO See VariadicOperandTraits for mutable operands
+template <>
+struct OperandTraits<NdiInst> :
+  public FixedNumOperandTraits<NdiInst, 2> {
+};
+
+DEFINE_TRANSPARENT_OPERAND_ACCESSORS(NdiInst, Value)
 } // End llvm namespace
 
 #endif

@@ -4440,6 +4440,7 @@ std::error_code BitcodeReader::parseFunctionBody(Function *F) {
     Record.clear();
     Instruction *I = nullptr;
     unsigned BitCode = Stream.readRecord(Entry.ID, Record);
+
     switch (BitCode) {
     default: // Default behavior: reject
       return error("Invalid value");
@@ -4551,6 +4552,28 @@ std::error_code BitcodeReader::parseFunctionBody(Function *F) {
       }
       break;
     }
+    case bitc::FUNC_CODE_NDI: {         // NDI: [ndi, ty, opval, opcode]
+      unsigned OpNum = 0;
+      Value *LHS, *RHS;
+      if (getValueTypePair(Record, OpNum, NextValueNo, LHS) ||
+          popValue(Record, OpNum, NextValueNo, LHS->getType(), RHS) ||
+          OpNum+1 > Record.size())
+        return error("Invalid record");
+
+      // TODO Opc is always ndi since the operator is non-deterministic maybe we
+      // can remove it?
+      int Opc = Record[OpNum++];
+
+      I = new NdiInst(LHS, RHS, LHS->getType());
+      // TODO we don't handle Value::SubclassOptionalData, for reference look at
+      // case FUNC_CODE_INST_BINOP
+      // We only handle Add, Sub, Mul, Shl right now.
+      // We haven't handle SDiv, UDiv, LShr, AShr, FPMathOperator, for reference
+      // look at case FUNC_CODE_INST_BINOP
+      InstructionList.push_back(I);
+      break;
+    }
+
     case bitc::FUNC_CODE_INST_CAST: {    // CAST: [opval, opty, destty, castopc]
       unsigned OpNum = 0;
       Value *Op;
@@ -5294,6 +5317,7 @@ std::error_code BitcodeReader::parseFunctionBody(Function *F) {
       InstructionList.push_back(I);
       break;
     }
+
     case bitc::FUNC_CODE_INST_LOADATOMIC: {
        // LOADATOMIC: [opty, op, align, vol, ordering, synchscope]
       unsigned OpNum = 0;

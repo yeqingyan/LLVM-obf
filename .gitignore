@@ -20,7 +20,9 @@
 .sw?
 #OS X specific files.
 .DS_store
-
+#Intellij/VScode configure folder.
+.idea/
+.vscode/
 #==============================================================================#
 # Explicit files to ignore (only matches one).
 #==============================================================================#

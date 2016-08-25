@@ -3881,6 +3881,59 @@ void IndirectBrInst::setSuccessorV(unsigned idx, BasicBlock *B) {
 }
 
 //===----------------------------------------------------------------------===//
+//                        NdiInst Implementation
+//===----------------------------------------------------------------------===//
+
+NdiInst::NdiInst(Value *S1, Value *S2,
+                 Type *Ty, const Twine &Name,
+                 Instruction *InsertBefore)
+  : Instruction(Ty, Instruction::Ndi,
+                OperandTraits<NdiInst>::op_begin(this),
+                OperandTraits<NdiInst>::operands(this),
+                InsertBefore){
+  Op<0>() = S1;
+  Op<1>() = S2;
+  // Skip check operand's type
+  setName(Name);
+}
+
+NdiInst::NdiInst(Value *S1, Value *S2,
+                 Type *Ty, const Twine &Name,
+                 BasicBlock *InsertAtEnd)
+  : Instruction(Ty, Instruction::Ndi,
+                OperandTraits<NdiInst>::op_begin(this),
+                OperandTraits<NdiInst>::operands(this),
+                InsertAtEnd){
+  Op<0>() = S1;
+  Op<1>() = S2;
+  // Skip check operand's type
+  setName(Name);
+}
+
+int NdiInst::getInstructionIndex(Instruction* i) {
+  int index = 0;
+  BasicBlock::iterator blockIterator = i->getParent()->begin();
+  while ((blockIterator != i->getParent()->end()) &&
+         ((&*blockIterator) != i)) {
+    index += 1;
+    blockIterator++;
+  }
+  return index;
+}
+
+int NdiInst::getInstructionIndex() {
+  return getInstructionIndex(this);
+}
+//static NdiInst* NdiInst::Create(Instruction *obfuscateInstrunullptr,
+//                       Instruction *InsertBefore = nullptr) {
+//  return new NdiInst(obfuscateInstrunullptr, InsertBefore);
+//}
+//
+//static NdiInst* NdiInst::Create(Instruction *obfuscateInstrunullptr,
+//                                BasicBlock *InsertAtEnd) {
+//  return new NdiInst(obfuscateInstrunullptr, InsertAtEnd);
+//}
+//===----------------------------------------------------------------------===//
 //                           cloneImpl() implementations
 //===----------------------------------------------------------------------===//
 
@@ -4058,6 +4111,10 @@ InvokeInst *InvokeInst::cloneImpl() const {
     return new(getNumOperands(), DescriptorBytes) InvokeInst(*this);
   }
   return new(getNumOperands()) InvokeInst(*this);
+}
+
+NdiInst *NdiInst::cloneImpl() const {
+  return new NdiInst(getOperand(0), getOperand(1), getOperand(0)->getType());
 }
 
 ResumeInst *ResumeInst::cloneImpl() const { return new (1) ResumeInst(*this); }

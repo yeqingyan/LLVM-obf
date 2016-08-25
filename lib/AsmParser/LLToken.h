@@ -294,6 +294,7 @@ enum Kind {
   kw_cleanup,
   kw_catch,
   kw_filter,
+  kw_ndi,
 
   kw_ret,
   kw_br,
