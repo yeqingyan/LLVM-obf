@@ -26,6 +26,8 @@
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
 #include <cmath>
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
+
 using namespace llvm;
 
 #define DEBUG_TYPE "interpreter"
@@ -1820,20 +1822,37 @@ void Interpreter::visitNdiInst(NdiInst &I) {
   GenericValue Src1 = getOperandValue(I.getOperand(0), SF);
   GenericValue Src2 = getOperandValue(I.getOperand(1), SF);
   GenericValue R;   // Result
+  SmallVector<Value*, 8> Args;
+  CallInst *CI;
+  Value *Callee;
+  FunctionType *FTy;
+  SmallVector<OperandBundleDef, 2> BundleList;
 
   int index = I.getInstructionIndex();
   switch (index) {
-    case 6: // Instruction::Add
-      R.IntVal = Src1.IntVal + Src2.IntVal;
-      break;
-    case 12: // Instruction:Sub
-      R.IntVal = Src1.IntVal - Src2.IntVal;
-      break;
+#include "patch.h"
+//    case 9: // Instruction::Add
+//      R.IntVal = Src1.IntVal + Src2.IntVal;
+//      SetValue(&I, R, SF);
+//      break;
+//    case 15: // Instruction:Sub
+//      R.IntVal = Src1.IntVal - Src2.IntVal;
+//      SetValue(&I, R, SF);
+//      break;
+//    case 22: // function
+//      Callee = FindFunctionNamed("_Z7obfFuncii");
+//      FTy = cast<Function>(Callee)->getFunctionType();
+//      Args.reserve(2);
+//      Args.push_back(I.getOperand(0));
+//      Args.push_back(I.getOperand(1));
+//      CI = CallInst::Create(FTy, Callee, Args, BundleList);
+//      ReplaceInstWithInst(&I, CI);
+//      visitCallInst(*CI);
+//      break;
     default:
       llvm_unreachable("Unhandled ndi instruction");
       break;
   }
-  SetValue(&I, R, SF);
 }
 
 void Interpreter::visitShuffleVectorInst(ShuffleVectorInst &I){

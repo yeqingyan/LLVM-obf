@@ -529,6 +529,9 @@ public:
 #define   LAST_OTHER_INST(N)             OtherOpsEnd = N+1
 #include "llvm/IR/Instruction.def"
   };
+
+  virtual std::string getSignature() { return std::string("Unknown"); };
+
 private:
   // Shadow Value::setValueSubclassData with a private forwarding method so that
   // subclasses cannot accidentally use it.

@@ -1,2 +1,5 @@
 add_llvm_loadable_module( Obfuscation
-        Obfuscation.cpp)
+        Obfuscation.cpp
+
+        DEPENDS
+        opt)

@@ -1379,6 +1379,8 @@ protected:
   CallInst *cloneImpl() const;
 
 public:
+  std::string getSignature() override ;
+
   static CallInst *Create(Value *Func, ArrayRef<Value *> Args,
                           ArrayRef<OperandBundleDef> Bundles = None,
                           const Twine &NameStr = "",
@@ -4958,7 +4960,7 @@ public:
 
   Instruction* getObfuscatedInstruction() const;
   int getInstructionIndex();
-  int getInstructionIndex(Instruction *i);
+  static int getInstructionIndex(Instruction *i);
 
 //private:
 };

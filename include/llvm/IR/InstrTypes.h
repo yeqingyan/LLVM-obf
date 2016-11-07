@@ -542,6 +542,8 @@ public:
   static inline bool classof(const Value *V) {
     return isa<Instruction>(V) && classof(cast<Instruction>(V));
   }
+
+  std::string getSignature() override;
 };
 
 template <>

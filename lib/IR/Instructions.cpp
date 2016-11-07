@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+#include <llvm/Support/Format.h>
 #include "llvm/IR/Instructions.h"
 #include "LLVMContextImpl.h"
 #include "llvm/IR/CallSite.h"
@@ -626,6 +627,21 @@ Instruction *CallInst::CreateFree(Value *Source,
   Instruction *FreeCall = createFree(Source, Bundles, nullptr, InsertAtEnd);
   assert(FreeCall && "CreateFree did not create a CallInst");
   return FreeCall;
+}
+
+std::string CallInst::getSignature() {
+  std::string signature;
+  raw_string_ostream strStream(signature);
+  strStream << *(getFunctionType()->getReturnType());
+  strStream << "(";
+  for (FunctionType::param_iterator I = FTy->param_begin(),
+           E = FTy->param_end(); I != E; ++I) {
+    if (I != FTy->param_begin())
+      strStream << ",";
+    strStream << **I;
+  }
+  strStream << ")";
+  return strStream.str();
 }
 
 //===----------------------------------------------------------------------===//
@@ -2301,6 +2317,17 @@ bool BinaryOperator::swapOperands() {
   return false;
 }
 
+std::string BinaryOperator::getSignature() {
+  std::string signature;
+  raw_string_ostream strStream(signature);
+  strStream << *(getOperand(0)->getType());    // Return type
+  strStream << "(";
+  strStream << *(getOperand(0)->getType());    // Operand 0 type
+  strStream << ",";
+  strStream << *(getOperand(1)->getType());    // Operand 1 type
+  strStream << ")";
+  return strStream.str();
+}
 
 //===----------------------------------------------------------------------===//
 //                             FPMathOperator Class
