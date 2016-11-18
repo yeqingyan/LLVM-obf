@@ -4554,17 +4554,19 @@ std::error_code BitcodeReader::parseFunctionBody(Function *F) {
     }
     case bitc::FUNC_CODE_NDI: {         // NDI: [ndi, ty, opval, opcode]
       unsigned OpNum = 0;
-      Value *LHS, *RHS;
-      if (getValueTypePair(Record, OpNum, NextValueNo, LHS) ||
-          popValue(Record, OpNum, NextValueNo, LHS->getType(), RHS) ||
+      Value *Op1, *Op2, *marker;
+      if (getValueTypePair(Record, OpNum, NextValueNo, Op1) ||
+          popValue(Record, OpNum, NextValueNo, Op1->getType(), Op2) ||
+          popValue(Record, OpNum, NextValueNo,
+                   Type::getInt32Ty(Context), marker) ||
           OpNum+1 > Record.size())
         return error("Invalid record");
 
       // TODO Opc is always ndi since the operator is non-deterministic maybe we
       // can remove it?
-      int Opc = Record[OpNum++];
+      //int Opc = Record[OpNum++];
 
-      I = new NdiInst(LHS, RHS, LHS->getType());
+      I = new NdiInst(Op1, Op2, marker, Op1->getType());
       // TODO we don't handle Value::SubclassOptionalData, for reference look at
       // case FUNC_CODE_INST_BINOP
       // We only handle Add, Sub, Mul, Shl right now.

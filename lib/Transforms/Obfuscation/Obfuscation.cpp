@@ -1,5 +1,5 @@
 #include <llvm/Support/FileSystem.h>
-//#include <stdio.h>
+#include <llvm/IR/Constants.h>
 #include "llvm/ADT/SmallSet.h"
 #include "llvm/Pass.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
@@ -16,12 +16,20 @@
 using namespace llvm;
 
 namespace {
-  struct Obfuscation : public BasicBlockPass {
+  struct Obfuscation : public ModulePass {
     static char ID;
     static StringMap<int> potentialNdis;
     static StringMap<SmallSet<int, 5>> usedNdi;
 
-    Obfuscation() : BasicBlockPass(ID) {}
+    FILE *patchFile;
+    Obfuscation() : ModulePass(ID) {
+      patchFile = fopen("/home/alan/patch.h", "w");
+    }
+
+    ~Obfuscation() {
+      dbgs() << "Close patch file.";
+      fclose(patchFile);
+    }
 
     int getIndex(Instruction *I) {
       int index = 0;
@@ -34,31 +42,56 @@ namespace {
       return index;
     }
 
-    void writeToPatch(int opcode, Instruction *obfInst) {
+    // Write the elseif condition to patch
+    // We assume the left operand of icmpInst is a variable, the right operand
+    // of icmpInst is a constant.
+    void writeElseIfConditionToPatch(ICmpInst *icmpInst) {
+      std::string op;
+      switch (icmpInst->getPredicate()) {
+        case ICmpInst::ICMP_EQ:  op = "=="; break;
+        case ICmpInst::ICMP_NE:  op = "!="; break;
+        case ICmpInst::ICMP_ULT: op = "<"; break;
+        case ICmpInst::ICMP_SLT: op = "<"; break;
+        case ICmpInst::ICMP_UGT: op = ">"; break;
+        case ICmpInst::ICMP_SGT: op = ">"; break;
+        case ICmpInst::ICMP_ULE: op = "<="; break;
+        case ICmpInst::ICMP_SLE: op = "<="; break;
+        case ICmpInst::ICMP_UGE: op = ">="; break;
+        case ICmpInst::ICMP_SGE: op = ">="; break;
+        default:
+          dbgs() << "Unknown ICmp predicate!\n-->";
+          icmpInst->dump();
+          llvm_unreachable(nullptr);
+      }
+
+      const Constant *C = dyn_cast<const Constant>(icmpInst->getOperand(1));
+      const ConstantInt *CI = cast<ConstantInt>(C);
+      // TODO We assume the condition value here is always signed value.
+      int constantValue = CI->getSExtValue();
+      fprintf(patchFile,
+              "else if (marker %s %d){\n", op.c_str(), constantValue);
+    }
+
+    // Write the elseif body to patch
+    void writeElseIfBodyToPatch(int opcode, Instruction *obfInst) {
       int index = getIndex(obfInst);
-      FILE *patchFile;
-      patchFile = fopen("/home/alan/patch.h", "a+");
+//      FILE *patchFile;
 
       switch (opcode) {
         case Instruction::Add:
           fprintf(patchFile,
-                  "case %d: "
                       "R.IntVal = Src1.IntVal + Src2.IntVal;"
                       "SetValue(&I, R, SF);"
-                      "break;",
-                  index);
+                      "}\n");
           break;
         case Instruction::Sub:
           fprintf(patchFile,
-                  "case %d:"
                       "R.IntVal = Src1.IntVal - Src2.IntVal;"
                       "SetValue(&I, R, SF);"
-                      "break;",
-                  index);
+                      "}\n");
           break;
         case Instruction::Call:
           fprintf(patchFile,
-                  "case %d:"
                       "Callee = FindFunctionNamed(\"%s\");"
                       "FTy = cast<Function>(Callee)->getFunctionType();"
                       "Args.reserve(2);"
@@ -67,85 +100,140 @@ namespace {
                       "CI = CallInst::Create(FTy, Callee, Args, BundleList);"
                       "ReplaceInstWithInst(&I, CI);"
                       "visitCallInst(*CI);"
-                      "break;",
-                  index,
+                      "}\n",
                   cast<CallInst>(
                       obfInst)->getCalledFunction()->getName().str().c_str());
           break;
         default:
           break;
       }
-      fclose(patchFile);
     }
 
-    bool runOnBasicBlock(BasicBlock &BB) override {
-      bool codeModified = false;
-      BasicBlock::iterator i = BB.begin();
-      while (i != BB.end()) {
-        // Get the next iterator first, in case we will replace the
-        // current instruction
-        Instruction &curInst = *(i++);
+    /**
+     * Replace the current instruction with NDI
+     * @param I     Current instruction
+     * @return      true if replacement successful, otherwise return false
+     */
+    bool replaceInstructionWithNdi(Value *markArgument, Instruction &I) {
+      int instructionIndex = getIndex(&I);
+      unsigned int opcode = I.getOpcode();
 
-        std::string signature = curInst.getSignature();
-        int instructionIndex = getIndex(&curInst);
+      if ((opcode == Instruction::Add) ||
+          (opcode == Instruction::Sub) ||
+          (opcode == Instruction::Mul) ||
+          (opcode == Instruction::Shl)) {
+        // TODO Check Instruction::getName() usage.
+        Value *Op1 = I.getOperand(0);
+        Value *Op2 = I.getOperand(1);
+        NdiInst *ndi = new NdiInst(Op1, Op2, markArgument, Op1->getType());
 
-        // TODO test only, we only replace the first two instructions which have
-        // same signature, into ndi instructions.
-        if (!potentialNdis.insert(StringMapEntry<int>::Create(signature, 1))) {
-          potentialNdis[signature] += 1;
+        dbgs() << format("== pc %d, replace ", instructionIndex)
+               << I.getOpcodeName()
+               << " with ndi instruction\n";
+        writeElseIfBodyToPatch(opcode, &I);
+        ReplaceInstWithInst(&I, ndi);
+        return true;
+      } else if (opcode == Instruction::Call) {
+        CallInst &call = cast<CallInst>(I);
+        if ((call.getNumArgOperands() != 2) ||
+            (!call.getFunctionType()->getReturnType()->isIntegerTy())) {
+          return false;
         }
 
-        if (usedNdi[signature].size() >= 4 ||
-            !(usedNdi[signature].insert(instructionIndex)).second) {
-          continue;       // Already have NDI with the same index.
+        Value *Op1 = call.getArgOperand(0);
+        Value *Op2 = call.getArgOperand(1);
+
+        if ((!Op1->getType()->isIntegerTy()) ||
+            (!Op2->getType()->isIntegerTy())) {
+          return false;
         }
+        NdiInst *ndi = new NdiInst(Op1, Op2, markArgument, Op1->getType());
+        dbgs() << format("== pc %d, replace call %s with ndi instruction\n",
+                         instructionIndex,
+                         call.getCalledValue()->getName());
+        writeElseIfBodyToPatch(opcode, &I);
+        ReplaceInstWithInst(&I, ndi);
+        return true;
+      }
+      return false;
+    }
+//    /**
+//     * Try use pc to convert an instruction to NDI
+//     * @param I Instruction
+//     * @return true if the instruction replaced to NDI, otherwise return false
+//     */
+//    bool useProgramCounterToNdi(BasicBlock::iterator &I) {
+//      Instruction &instruction = *(I++);
+//
+//      std::string signature = instruction.getSignature();
+//      int instructionIndex = getIndex(&instruction);
+//
+//      if (!potentialNdis.insert(StringMapEntry<int>::Create(signature, 1))) {
+//        potentialNdis[signature] += 1;
+//      }
+//
+//      if (usedNdi[signature].size() >= 4 ||
+//          !(usedNdi[signature].insert(instructionIndex)).second) {
+//        return false;               // Already have NDI with the same index.
+//      }
+//
+//      return replaceInstructionWithNdi(instruction);
+//    }
 
-        unsigned int opcode = curInst.getOpcode();
+    /**
+     * Try use pc to convert an instruction to NDI
+     * @param currentInstruction Current Instruction
+     * @return true if the instruction replaced to NDI, otherwise return false
+    */
+    bool useMarkerToNdi(BasicBlock::iterator &I) {
+      Instruction &currentInstruction = *(I++);
+      if (currentInstruction.getOpcode() != Instruction::Call) {
+        return false;
+      }
 
-        if ((opcode == Instruction::Add) ||
-            (opcode == Instruction::Sub) ||
-            (opcode == Instruction::Mul) ||
-            (opcode == Instruction::Shl)) {
-          // TODO Check Instruction::getName() usage.
-          Value *Op1 = curInst.getOperand(0);
-          Value *Op2 = curInst.getOperand(1);
-          NdiInst *ndi = new NdiInst(Op1, Op2, Op1->getType());
+      CallInst &callInst = cast<CallInst>(currentInstruction);
+      Function *markerFunction = callInst.getCalledFunction();
+      if (!markerFunction->getName().equals("marker")) {
+        return false;
+      }
 
-          dbgs() << format("== pc %d, replace ", instructionIndex)
-                 << curInst.getOpcodeName()
-                 << " with ndi instruction\n";
-          writeToPatch(opcode, &curInst);
-          ReplaceInstWithInst(&curInst, ndi);
-          codeModified = true;
-        } else if (opcode == Instruction::Call) {
-          CallInst &call = cast<CallInst>(curInst);
-          if ((call.getNumArgOperands() != 2) ||
-              (!call.getFunctionType()->getReturnType()->isIntegerTy())) {
-            continue;
-          }
+      Value *condition = callInst.getArgOperand(0);
+      // Skip the instruction cast int1(bool) to int32
+      ZExtInst *zextInstruction = dyn_cast<ZExtInst>(condition);
+      ICmpInst *icmpInstruction = dyn_cast<ICmpInst>(zextInstruction->getOperand(0));
+      Value *markArgument = icmpInstruction->getOperand(0);
+      writeElseIfConditionToPatch(icmpInstruction);
 
-          Value *Op1 = call.getArgOperand(0);
-          Value *Op2 = call.getArgOperand(1);
+      BasicBlock::iterator nextIterator(callInst);
+      nextIterator++;              // Skip current Instruction
+      BasicBlock::iterator end = callInst.getParent()->end();
 
-          if ((!Op1->getType()->isIntegerTy()) ||
-              (!Op2->getType()->isIntegerTy())) {
-            continue;
-          }
-          NdiInst *ndi = new NdiInst(Op1, Op2, Op1->getType());
-          dbgs() << call.getSignature() << "\n";
-          dbgs() << format("== pc %d, replace call %s with ndi instruction\n",
-                           instructionIndex,
-                           call.getCalledValue()->getName());
-          writeToPatch(opcode, &curInst);
-          ReplaceInstWithInst(&curInst, ndi);
-          codeModified = true;
+      callInst.eraseFromParent();
+      zextInstruction->eraseFromParent();
+      icmpInstruction->eraseFromParent();
+//      zextInstruction->removeFromParent();
+//      callInst.removeFromParent();
+
+      while (nextIterator != end) {
+        Instruction &nextInstruction = *(nextIterator++);
+        // Find the first replaceable instruction and replace it with Ndi
+        if (replaceInstructionWithNdi(markArgument, nextInstruction)) {
+//                    icmpInstruction->eraseFromParent(); // Remove cast bool to int 32
+//          zextInstruction->eraseFromParent(); // Remove compare instruction
+//
+//          callInst.eraseFromParent();  // Remove marker function call
+          return true;
+        } else {
+          continue;
         }
       }
-      return codeModified;
+      return false;
     }
 
-    bool doFinalization(Function &F) override {
-      dbgs() << "Finish analysis function: " << F.getName() << "\n";
+    /**
+     * Print signatures in code.
+     */
+    void signatureSummary() {
       dbgs() << "Instruction signature Count\n";
       for (StringMap<int>::iterator i = potentialNdis.begin();
            i != potentialNdis.end();
@@ -154,8 +242,48 @@ namespace {
                << potentialNdis[i->getKey()] << "\n";
       }
       dbgs() << "\n";
-      return false;
     }
+
+    bool runOnModule(Module &M) override {
+      bool codeModified = false;
+
+      // First run, get potential NDI.
+      for (Function &F: M.functions()) {
+        for (Function::iterator FI = F.begin(); FI != F.end(); FI++) {
+          BasicBlock &BB = *FI;
+          for (BasicBlock::iterator BI = BB.begin(); BI != BB.end(); BI++) {
+            Instruction &instruction = *(BI);
+            std::string signature = instruction.getSignature();
+            if (!potentialNdis.insert(
+                StringMapEntry<int>::Create(signature, 1))) {
+              potentialNdis[signature] += 1;
+            }
+          }
+        }
+      }
+      signatureSummary();
+
+      // Second run, replace instruction with NDI.
+      for (Function &F: M.functions()) {
+        for (Function::iterator FI = F.begin(); FI != F.end(); FI++) {
+          BasicBlock &BB = *FI;
+          BasicBlock::iterator i = BB.begin();
+          while (i != BB.end()) {
+//            codeModified = useProgramCounterToNdi(i) || codeModified;
+            codeModified = useMarkerToNdi(i) || codeModified;
+          }
+        }
+      }
+
+      // Remove marker() function
+      Function *marker = M.getFunction("marker");
+      if (marker != NULL) {
+        marker->deleteBody();
+      }
+
+      return codeModified;
+    }
+
   };
 }
 

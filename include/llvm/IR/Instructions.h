@@ -4941,12 +4941,12 @@ protected:
 
 public:
   void *operator new(size_t s) {
-    return User::operator new(s, 2);
+    return User::operator new(s, 3);
   }
 
-  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
+  NdiInst(Value *S1, Value *S2, Value *marker, Type *Ty, const Twine &Name = "",
           Instruction *InsertBefore = nullptr);
-  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name,
+  NdiInst(Value *S1, Value *S2, Value *marker, Type *Ty, const Twine &Name,
           BasicBlock *InsertAtEnd);
 
 //  static NdiInst *Create(Instruction *obfuscateInstrunullptr,
@@ -4968,7 +4968,7 @@ public:
 // TODO See VariadicOperandTraits for mutable operands
 template <>
 struct OperandTraits<NdiInst> :
-  public FixedNumOperandTraits<NdiInst, 2> {
+  public FixedNumOperandTraits<NdiInst, 3> {
 };
 
 DEFINE_TRANSPARENT_OPERAND_ACCESSORS(NdiInst, Value)

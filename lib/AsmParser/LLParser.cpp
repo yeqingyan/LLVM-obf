@@ -6218,18 +6218,21 @@ int LLParser::ParseFence(Instruction *&Inst, PerFunctionState &PFS) {
 /// ParseNdiInst
 int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
                        unsigned Opc) {
-  LocTy Loc; Value *LHS, *RHS;
-  if (ParseTypeAndValue(LHS, Loc, PFS) ||
+  LocTy Loc;
+  Value *Op1, *Op2, *marker;
+  if (ParseTypeAndValue(Op1, Loc, PFS) ||
       ParseToken(lltok::comma, "expected ',' in arithmetic operation") ||
-      ParseValue(LHS->getType(), RHS, PFS))
+      ParseValue(Op1->getType(), Op2, PFS) ||
+      ParseToken(lltok::comma, "expected ',' in arithmetic operation") ||
+      ParseValue(Type::getInt32Ty(Context), marker, PFS))
     return true;
 
-  bool Valid = LHS->getType()->isIntOrIntVectorTy();
+  bool Valid = Op1->getType()->isIntOrIntVectorTy();
 
   if (!Valid)
     return Error(Loc, "invalid operand type for instruction");
 
-  Inst = new NdiInst(LHS, RHS, LHS->getType());
+  Inst = new NdiInst(Op1, Op2, marker, Op1->getType());
   return false;
 }
 

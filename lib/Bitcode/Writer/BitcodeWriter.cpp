@@ -2646,7 +2646,8 @@ void ModuleBitcodeWriter::writeInstruction(const Instruction &I,
     pushValueAndType(I.getOperand(0), InstID, Vals);
 //      AbbrevToUse = FUNCTION_INST_BINOP_ABBREV;
     pushValue(I.getOperand(1), InstID, Vals);
-    Vals.push_back(I.getOpcode());
+    pushValue(I.getOperand(2), InstID, Vals);
+    //Vals.push_back(I.getOpcode());
     // TODO check Flags usage
 //    uint64_t Flags = getOptimizationFlags(&I);
 //    if (Flags != 0) {

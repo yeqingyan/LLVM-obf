@@ -1821,6 +1821,7 @@ void Interpreter::visitNdiInst(NdiInst &I) {
   ExecutionContext &SF = ECStack.back();
   GenericValue Src1 = getOperandValue(I.getOperand(0), SF);
   GenericValue Src2 = getOperandValue(I.getOperand(1), SF);
+  GenericValue markerVariable = getOperandValue(I.getOperand(2), SF);
   GenericValue R;   // Result
   SmallVector<Value*, 8> Args;
   CallInst *CI;
@@ -1828,9 +1829,14 @@ void Interpreter::visitNdiInst(NdiInst &I) {
   FunctionType *FTy;
   SmallVector<OperandBundleDef, 2> BundleList;
 
-  int index = I.getInstructionIndex();
-  switch (index) {
+  int marker = markerVariable.IntVal.getSExtValue();
+  dbgs() << "marker: " << marker << "\n";
+  if (false) {
+  }
 #include "patch.h"
+  else {
+    llvm_unreachable("Unhandled ndi instruction");
+  }
 //    case 9: // Instruction::Add
 //      R.IntVal = Src1.IntVal + Src2.IntVal;
 //      SetValue(&I, R, SF);
@@ -1849,10 +1855,10 @@ void Interpreter::visitNdiInst(NdiInst &I) {
 //      ReplaceInstWithInst(&I, CI);
 //      visitCallInst(*CI);
 //      break;
-    default:
-      llvm_unreachable("Unhandled ndi instruction");
-      break;
-  }
+//    default:
+//      llvm_unreachable("Unhandled ndi instruction");
+//      break;
+//  }
 }
 
 void Interpreter::visitShuffleVectorInst(ShuffleVectorInst &I){

@@ -3911,7 +3911,7 @@ void IndirectBrInst::setSuccessorV(unsigned idx, BasicBlock *B) {
 //                        NdiInst Implementation
 //===----------------------------------------------------------------------===//
 
-NdiInst::NdiInst(Value *S1, Value *S2,
+NdiInst::NdiInst(Value *S1, Value *S2, Value *marker,
                  Type *Ty, const Twine &Name,
                  Instruction *InsertBefore)
   : Instruction(Ty, Instruction::Ndi,
@@ -3920,11 +3920,12 @@ NdiInst::NdiInst(Value *S1, Value *S2,
                 InsertBefore){
   Op<0>() = S1;
   Op<1>() = S2;
+  Op<2>() = marker;
   // Skip check operand's type
   setName(Name);
 }
 
-NdiInst::NdiInst(Value *S1, Value *S2,
+NdiInst::NdiInst(Value *S1, Value *S2, Value *marker,
                  Type *Ty, const Twine &Name,
                  BasicBlock *InsertAtEnd)
   : Instruction(Ty, Instruction::Ndi,
@@ -3933,6 +3934,7 @@ NdiInst::NdiInst(Value *S1, Value *S2,
                 InsertAtEnd){
   Op<0>() = S1;
   Op<1>() = S2;
+  Op<2>() = marker;
   // Skip check operand's type
   setName(Name);
 }
@@ -4141,7 +4143,8 @@ InvokeInst *InvokeInst::cloneImpl() const {
 }
 
 NdiInst *NdiInst::cloneImpl() const {
-  return new NdiInst(getOperand(0), getOperand(1), getOperand(0)->getType());
+  return new NdiInst(getOperand(0), getOperand(1), getOperand(2),
+                     getOperand(0)->getType());
 }
 
 ResumeInst *ResumeInst::cloneImpl() const { return new (1) ResumeInst(*this); }
