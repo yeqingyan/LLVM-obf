@@ -3879,7 +3879,9 @@ unsigned IndirectBrInst::getNumSuccessorsV() const {
 void IndirectBrInst::setSuccessorV(unsigned idx, BasicBlock *B) {
   setSuccessor(idx, B);
 }
-
+#define NDI_PATCH_INSTRUCTIONS_CPP
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_INSTRUCTIONS_CPP
 //===----------------------------------------------------------------------===//
 //                           cloneImpl() implementations
 //===----------------------------------------------------------------------===//

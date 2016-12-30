@@ -4922,6 +4922,9 @@ public:
   }
 };
 
+#define NDI_PATCH_INSTRUCTIONS__H
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_INSTRUCTIONS__H
 } // End llvm namespace
 
 #endif

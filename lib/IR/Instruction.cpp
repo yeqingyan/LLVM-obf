@@ -338,6 +338,9 @@ const char *Instruction::getOpcodeName(unsigned OpCode) {
   case InsertValue:    return "insertvalue";
   case LandingPad:     return "landingpad";
   case CleanupPad:     return "cleanuppad";
+#define NDI_PATCH_INSTRUCTION_CPP
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_INSTRUCTION_CPP
 
   default: return "<Invalid operator> ";
   }

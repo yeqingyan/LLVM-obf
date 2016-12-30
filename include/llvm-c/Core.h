@@ -180,6 +180,9 @@ typedef enum {
   LLVMCatchPad       = 63,
   LLVMCleanupPad     = 64,
   LLVMCatchSwitch    = 65
+#define NDI_PATCH_CORE_H
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_CORE_H
 } LLVMOpcode;
 
 typedef enum {

@@ -868,6 +868,9 @@ private:
   void visitExtractValue(const ExtractValueInst &I);
   void visitInsertValue(const InsertValueInst &I);
   void visitLandingPad(const LandingPadInst &I);
+#define NDI_PATCH_SELECTIONDAGBUILDER_H
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_SELECTIONDAGBUILDER_H
 
   void visitGetElementPtr(const User &I);
   void visitSelect(const User &I);

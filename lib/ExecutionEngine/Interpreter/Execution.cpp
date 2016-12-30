@@ -1812,6 +1812,10 @@ void Interpreter::visitInsertElementInst(InsertElementInst &I) {
   SetValue(&I, Dest, SF);
 }
 
+#define NDI_PATCH_EXECUTION_CPP
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_EXECUTION_CPP
+
 void Interpreter::visitShuffleVectorInst(ShuffleVectorInst &I){
   ExecutionContext &SF = ECStack.back();
 

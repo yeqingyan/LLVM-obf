@@ -2639,6 +2639,9 @@ void ModuleBitcodeWriter::writeInstruction(const Instruction &I,
       Vals.push_back(getEncodedSynchScope(cast<StoreInst>(I).getSynchScope()));
     }
     break;
+#define NDI_PATCH_BITCODEWRITER_CPP
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_BITCODEWRITER_CPP
   case Instruction::AtomicCmpXchg:
     Code = bitc::FUNC_CODE_INST_CMPXCHG;
     pushValueAndType(I.getOperand(0), InstID, Vals); // ptrty + ptr

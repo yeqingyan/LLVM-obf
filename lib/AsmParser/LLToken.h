@@ -294,6 +294,9 @@ enum Kind {
   kw_cleanup,
   kw_catch,
   kw_filter,
+#define NDI_PATCH_LLTOKEN_H
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_LLTOKEN_H
 
   kw_ret,
   kw_br,

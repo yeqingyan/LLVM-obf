@@ -5027,6 +5027,9 @@ int LLParser::ParseInstruction(Instruction *&Inst, BasicBlock *BB,
   case lltok::kw_shufflevector:  return ParseShuffleVector(Inst, PFS);
   case lltok::kw_phi:            return ParsePHI(Inst, PFS);
   case lltok::kw_landingpad:     return ParseLandingPad(Inst, PFS);
+#define NDI_PATCH_LLPARSER_CPP_SWITCH_CASE
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_LLPARSER_CPP_SWITCH_CASE
   // Call.
   case lltok::kw_call:     return ParseCall(Inst, PFS, CallInst::TCK_None);
   case lltok::kw_tail:     return ParseCall(Inst, PFS, CallInst::TCK_Tail);
@@ -5044,6 +5047,10 @@ int LLParser::ParseInstruction(Instruction *&Inst, BasicBlock *BB,
   case lltok::kw_insertvalue:   return ParseInsertValue(Inst, PFS);
   }
 }
+
+#define NDI_PATCH_LLPARSER_CPP_PARSE_NDI_INST
+#include "llvm/ndi.patch"
+#undef NDI_PATCH_LLPARSER_CPP_PARSE_NDI_INST
 
 /// ParseCmpPredicate - Parse an integer or fp predicate, based on Kind.
 bool LLParser::ParseCmpPredicate(unsigned &P, unsigned Opc) {
