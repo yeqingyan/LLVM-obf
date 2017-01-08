@@ -4551,6 +4551,10 @@ std::error_code BitcodeReader::parseFunctionBody(Function *F) {
       }
       break;
     }
+#define NDI_PATCH_BITCODEREADER_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_BITCODEREADER_CPP
+
     case bitc::FUNC_CODE_INST_CAST: {    // CAST: [opval, opty, destty, castopc]
       unsigned OpNum = 0;
       Value *Op;

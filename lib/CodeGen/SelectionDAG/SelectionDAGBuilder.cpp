@@ -2375,6 +2375,10 @@ void SelectionDAGBuilder::visitLandingPad(const LandingPadInst &LP) {
   setValue(&LP, Res);
 }
 
+#define NDI_PATCH_SELECTIONDAGBUILDER_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_SELECTIONDAGBUILDER_CPP
+
 void SelectionDAGBuilder::sortAndRangeify(CaseClusterVector &Clusters) {
 #ifndef NDEBUG
   for (const CaseCluster &CC : Clusters)

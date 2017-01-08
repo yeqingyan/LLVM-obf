@@ -462,6 +462,9 @@ enum FunctionCodes {
   // 53 is unused.
   // 54 is unused.
   FUNC_CODE_OPERAND_BUNDLE = 55, // OPERAND_BUNDLE: [tag#, value...]
+#define NDI_PATCH_LLVMBITCODES_H
+#include "llvm/ndi.h"
+#undef NDI_PATCH_LLVMBITCODES_H
 };
 
 enum UseListCodes {

@@ -427,6 +427,9 @@ private:
   void visitFuncletPadInst(FuncletPadInst &FPI);
   void visitCatchSwitchInst(CatchSwitchInst &CatchSwitch);
   void visitCleanupReturnInst(CleanupReturnInst &CRI);
+  #define NDI_PATCH_VERIFIER_CPP_DECLARATION
+  #include "llvm/ndi.h"
+  #undef NDI_PATCH_VERIFIER_CPP_DECLARATION
 
   void verifyCallSite(CallSite CS);
   void verifySwiftErrorCallSite(CallSite CS, const Value *SwiftErrorVal);
@@ -3579,6 +3582,10 @@ void Verifier::visitCleanupReturnInst(CleanupReturnInst &CRI) {
 
   visitTerminatorInst(CRI);
 }
+
+#define NDI_PATCH_VERIFIER_CPP_IMPLEMENTATION
+#include "llvm/ndi.h"
+#undef NDI_PATCH_VERIFIER_CPP_IMPLEMENTATION
 
 void Verifier::verifyDominatesUse(Instruction &I, unsigned i) {
   Instruction *Op = cast<Instruction>(I.getOperand(i));

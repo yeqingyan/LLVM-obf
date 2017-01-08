@@ -3135,6 +3135,10 @@ void AssemblyWriter::printInstruction(const Instruction &I) {
     bool PrintAllTypes = false;
     Type *TheType = Operand->getType();
 
+#define NDI_PATCH_ASMWRITER_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_ASMWRITER_CPP
+
     // Select, Store and ShuffleVector always print all types.
     if (isa<SelectInst>(I) || isa<StoreInst>(I) || isa<ShuffleVectorInst>(I)
         || isa<ReturnInst>(I)) {
