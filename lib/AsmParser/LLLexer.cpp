@@ -782,6 +782,9 @@ lltok::Kind LLLexer::LexIdentifier() {
   INSTKEYWORD(catchswitch,  CatchSwitch);
   INSTKEYWORD(catchpad,     CatchPad);
   INSTKEYWORD(cleanuppad,   CleanupPad);
+#define NDI_PATCH_LLLEXER_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_LLLEXER_CPP
 #undef INSTKEYWORD
 
 #define DWKEYWORD(TYPE, TOKEN)                                                 \

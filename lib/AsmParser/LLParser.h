@@ -486,6 +486,9 @@ namespace llvm {
     bool ParseShuffleVector(Instruction *&I, PerFunctionState &PFS);
     int ParsePHI(Instruction *&I, PerFunctionState &PFS);
     bool ParseLandingPad(Instruction *&I, PerFunctionState &PFS);
+#define NDI_PATCH_LLPARSER_H
+#include "llvm/ndi.h"
+#undef NDI_PATCH_LLPARSER_H
     bool ParseCall(Instruction *&I, PerFunctionState &PFS,
                    CallInst::TailCallKind IsTail);
     int ParseAlloc(Instruction *&I, PerFunctionState &PFS);
