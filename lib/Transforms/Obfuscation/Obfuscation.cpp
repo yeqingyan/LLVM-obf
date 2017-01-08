@@ -227,7 +227,7 @@ namespace ndi {
       }
         break;
       case Instruction::ICmp:
-      case Instruction::FCmp:{
+      case Instruction::FCmp: {
         Value *Op1 = I.getOperand(0);
         Value *Op2 = I.getOperand(1);
         if (VectorType *vt = dyn_cast<VectorType>(Op1->getType())) {
@@ -241,7 +241,8 @@ namespace ndi {
                                 Type::getInt1Ty(Op1->getType()->getContext()));
         }
         codeModified = true;
-      } break;
+      }
+        break;
       case Instruction::Add:
       case Instruction::FAdd:
       case Instruction::Sub:
@@ -289,8 +290,14 @@ namespace ndi {
         break;
     }
     if (codeModified) {
-      std::cout << "== pc " << instructionIndex << ", replace "
-                << I.getOpcodeName() << " with ndi instruction\n";
+      if (opcode == Instruction::Call) {
+        std::cout << "== pc " << instructionIndex << ", replace call "
+                  << cast<CallInst>(I).getCalledValue()->getName().str()
+                  << " with ndi instruction\n";
+      } else {
+        std::cout << "== pc " << instructionIndex << ", replace "
+                  << I.getOpcodeName() << " with ndi instruction\n";
+      }
       generateInterpreterPatch(patchFile, I);
       ReplaceInstWithInst(&I, ndi);
     }
