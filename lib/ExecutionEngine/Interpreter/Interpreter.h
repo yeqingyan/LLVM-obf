@@ -186,6 +186,9 @@ public:
   void visitExtractValueInst(ExtractValueInst &I);
   void visitInsertValueInst(InsertValueInst &I);
 
+#define NDI_PATCH_INTERPRETER_H
+#include "llvm/ndi.h"
+#undef NDI_PATCH_INTERPRETER_H
   void visitInstruction(Instruction &I) {
     errs() << I << "\n";
     llvm_unreachable("Instruction not interpretable yet!");

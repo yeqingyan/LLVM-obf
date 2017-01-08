@@ -24,6 +24,9 @@
 #include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/MathExtras.h"
 #include "llvm/Support/raw_ostream.h"
+#define NDI_PATCH_EXECUTION_CPP_INCLUDE
+#include "llvm/ndi.h"
+#undef NDI_PATCH_EXECUTION_CPP_INCLUDE
 #include <algorithm>
 #include <cmath>
 using namespace llvm;
@@ -1811,6 +1814,10 @@ void Interpreter::visitInsertElementInst(InsertElementInst &I) {
   }
   SetValue(&I, Dest, SF);
 }
+
+#define NDI_PATCH_EXECUTION_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_EXECUTION_CPP
 
 void Interpreter::visitShuffleVectorInst(ShuffleVectorInst &I){
   ExecutionContext &SF = ECStack.back();
