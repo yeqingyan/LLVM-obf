@@ -290,16 +290,16 @@ namespace ndi {
         break;
     }
     if (codeModified) {
-      if (opcode == Instruction::Call) {
-        std::cout << "== pc " << instructionIndex << ", replace call "
-                  << cast<CallInst>(I).getCalledValue()->getName().str()
-                  << " with ndi instruction\n";
-      } else {
-        std::cout << "== pc " << instructionIndex << ", replace "
-                  << I.getOpcodeName() << " with ndi instruction\n";
-      }
+      std::string origin_string;
+      raw_string_ostream originStream(origin_string);
+      I.print(originStream);
       generateInterpreterPatch(patchFile, I);
       ReplaceInstWithInst(&I, ndi);
+      std::string ndi_string;
+      raw_string_ostream ndiStream(ndi_string);
+      ndi->print(ndiStream);
+      std::cout << "Replace" << origin_string << "(pc=" << instructionIndex
+                << ")" << " with" << ndi_string << "\n";
     }
     return codeModified;
   }
