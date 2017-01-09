@@ -1,5 +1,7 @@
 #include <iomanip>
 #include <iostream>
+#include <cxxabi.h>
+#include <string.h>
 #include "llvm/Support/FileSystem.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/ADT/SmallSet.h"
@@ -290,6 +292,16 @@ namespace ndi {
         break;
     }
     if (codeModified) {
+      int status;
+      static const char* prename = (const char *)"";
+      static const char* realname = NULL;
+      realname = abi::__cxa_demangle(I.getFunction()->getName().str().c_str(), 0, 0, &status);
+      if (strcmp(realname, prename)) {
+        std::cout << "\n------------------------------\n";
+        std::cout << "Function: " << realname << "\n";
+        std::cout << "------------------------------\n";
+        prename = realname;
+      }
       std::string origin_string;
       raw_string_ostream originStream(origin_string);
       I.print(originStream);
@@ -298,8 +310,8 @@ namespace ndi {
       std::string ndi_string;
       raw_string_ostream ndiStream(ndi_string);
       ndi->print(ndiStream);
-      std::cout << "Replace" << origin_string << "(pc=" << instructionIndex
-                << ")" << " with" << ndi_string << "\n";
+      std::cout << "PC=" << instructionIndex << ": "<< origin_string
+                << " =>" << ndi_string << "\n";
     }
     return codeModified;
   }
