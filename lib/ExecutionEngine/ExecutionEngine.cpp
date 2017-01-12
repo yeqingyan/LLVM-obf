@@ -613,7 +613,7 @@ GenericValue ExecutionEngine::getConstantValue(const Constant *C) {
         for (unsigned int i = 0; i < elemNum; ++i) {
           Type *ElemTy = STy->getElementType(i);
           if (ElemTy->isIntegerTy())
-            Result.AggregateVal[i].IntVal = 
+            Result.AggregateVal[i].IntVal =
               APInt(ElemTy->getPrimitiveSizeInBits(), 0);
           else if (ElemTy->isAggregateType()) {
               const Constant *ElemUndef = UndefValue::get(ElemTy);
@@ -882,7 +882,11 @@ GenericValue ExecutionEngine::getConstantValue(const Constant *C) {
     OS << "ConstantExpr not handled: " << *CE;
     report_fatal_error(OS.str());
   }
-
+  // Added by YEQING Begin
+  // https://reviews.llvm.org/D4245
+  if (const GlobalAlias *GA = dyn_cast<GlobalAlias>(C))
+    return getConstantValue(GA->getAliasee());
+  // Added by Yeqing End
   // Otherwise, we have a simple constant.
   GenericValue Result;
   switch (C->getType()->getTypeID()) {
@@ -907,6 +911,7 @@ GenericValue ExecutionEngine::getConstantValue(const Constant *C) {
       Result = PTOGV(getPointerToFunctionOrStub(const_cast<Function*>(F)));
     else if (const GlobalVariable *GV = dyn_cast<GlobalVariable>(C))
       Result = PTOGV(getOrEmitGlobalVariable(const_cast<GlobalVariable*>(GV)));
+
     else
       llvm_unreachable("Unknown constant pointer type!");
     break;
@@ -1081,6 +1086,61 @@ void ExecutionEngine::StoreValueToMemory(const GenericValue &Val,
       }
     }
     break;
+      // Yeqing experiment patch begin
+      // Very very poorly written.
+    case Type::StructTyID: {
+      auto *ST = cast<StructType>(Ty);
+      const unsigned numElems = ST->getNumElements();
+      unsigned used = 0;
+      for (unsigned int i = 0; i < numElems; ++i) {
+        Type *ElemTy = ST->getElementType(i);
+        if (ElemTy->isVectorTy()) {
+          auto *VT = cast<VectorType>(ElemTy);
+          Type *ElemT = VT->getElementType();
+          const unsigned numElemsElems = VT->getNumElements();
+          if (ElemT->isFloatTy()) {
+            for (unsigned j = 0; j < numElemsElems; ++j) {
+              *(((float*)Ptr)+used) = Val.AggregateVal[i].AggregateVal[j].FloatVal;
+              used += 1;
+            }
+          } else if (ElemT->isDoubleTy()) {
+            for (unsigned j = 0; j < numElemsElems; ++j) {
+              *(((double *) Ptr) +
+                i) = Val.AggregateVal[i].AggregateVal[j].DoubleVal;
+              used += 1;
+            }
+          } else if (ElemT->isIntegerTy()) {
+            for (unsigned j = 0; j < numElemsElems; ++j) {
+              unsigned numOfBytes =(Val.AggregateVal[i].AggregateVal[j].IntVal.getBitWidth()+7)/8;
+              StoreIntToMemory(Val.AggregateVal[i].AggregateVal[j].IntVal,
+                             (uint8_t*)Ptr + numOfBytes*used, numOfBytes);
+              used += 1;
+            }
+          } else {
+            SmallString<256> Msg;
+            raw_svector_ostream OS(Msg);
+            OS << "Cannot store value of type " << *Ty << "!";
+          }
+        } else if (ElemTy->isFloatTy()) {
+          *(((float*)Ptr)+used) = Val.AggregateVal[i].FloatVal;
+          used += 1;
+        } else if (ElemTy->isDoubleTy()) {
+          *(((double *) Ptr) +
+              used) = Val.AggregateVal[i].DoubleVal;
+          used += 1;
+        } else if (ElemTy->isIntegerTy()) {
+          unsigned numOfBytes =(Val.AggregateVal[i].IntVal.getBitWidth()+7)/8;
+          StoreIntToMemory(Val.AggregateVal[i].IntVal,
+                           (uint8_t*)Ptr + numOfBytes*used, numOfBytes);
+          used += 1;
+        } else {
+          SmallString<256> Msg;
+          raw_svector_ostream OS(Msg);
+          OS << "Cannot store value of type " << *Ty << "!";
+        }
+      }
+    } break;
+      // Yeqing experiment patch end
   }
 
   if (sys::IsLittleEndianHost != getDataLayout().isLittleEndian())
@@ -1170,6 +1230,66 @@ void ExecutionEngine::LoadValueFromMemory(GenericValue &Result,
     }
   break;
   }
+  // Yeqing experiment patch begin
+  // Very very poorly written.
+  case Type::StructTyID: {
+    auto *ST = cast<StructType>(Ty);
+    const unsigned numElems = ST->getNumElements();
+    unsigned used = 0;
+    Result.AggregateVal.resize(numElems);
+    for (unsigned int i = 0; i < numElems; ++i) {
+      Type *ElemTy = ST->getElementType(i);
+      if (ElemTy->isVectorTy()) {
+        auto *VT = cast<VectorType>(ElemTy);
+        Type *ElemT = VT->getElementType();
+        const unsigned numElemsElems = VT->getNumElements();
+        if (ElemT->isFloatTy()) {
+          Result.AggregateVal[i].AggregateVal.resize(numElemsElems);
+          for (unsigned j = 0; j < numElems; ++j) {
+            Result.AggregateVal[i].AggregateVal[j].FloatVal = *((float *) Ptr + used);
+            used += 1;
+          }
+        } else if (ElemT->isDoubleTy()) {
+          Result.AggregateVal[i].AggregateVal.resize(numElemsElems);
+          for (unsigned j = 0; j < numElems; ++j) {
+            Result.AggregateVal[i].AggregateVal[j].DoubleVal = *((double *) Ptr + used);
+            used += 1;
+          }
+        } else if (ElemT->isIntegerTy()) {
+          GenericValue intZero;
+          const unsigned elemBitWidth = cast<IntegerType>(ElemT)->getBitWidth();
+          intZero.IntVal = APInt(elemBitWidth, 0);
+          Result.AggregateVal[i].AggregateVal.resize(numElemsElems, intZero);
+          for (unsigned j = 0; j < numElems; ++j) {
+            LoadIntFromMemory(Result.AggregateVal[i].AggregateVal[j].IntVal,
+                              (uint8_t*)Ptr+((elemBitWidth+7)/8)*used, (elemBitWidth+7)/8);
+            used += 1;
+          }
+        } else {
+          SmallString<256> Msg;
+          raw_svector_ostream OS(Msg);
+          OS << "Cannot load value of type " << *Ty << "!";
+        }
+      } else if (ElemTy->isFloatTy()) {
+        Result.AggregateVal[i].FloatVal = *((float *) Ptr + used);
+        used += 1;
+      } else if (ElemTy->isDoubleTy()) {
+        Result.AggregateVal[i].DoubleVal = *((double *) Ptr + used);
+        used += 1;
+      } else if (ElemTy->isIntegerTy()) {
+        const unsigned elemBitWidth = cast<IntegerType>(ElemTy)->getBitWidth();
+        LoadIntFromMemory(Result.AggregateVal[i].IntVal,
+                          (uint8_t*)Ptr+((elemBitWidth+7)/8)*used, (elemBitWidth+7)/8);
+        used += 1;
+      } else {
+        SmallString<256> Msg;
+        raw_svector_ostream OS(Msg);
+        OS << "Cannot load value of type " << *Ty << "!";
+      }
+    }
+  } break;
+  // Yeqing experiment patch end
+
   default:
     SmallString<256> Msg;
     raw_svector_ostream OS(Msg);
