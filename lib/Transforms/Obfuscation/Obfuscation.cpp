@@ -117,7 +117,7 @@ namespace ndi {
     // Print signatures in code.
     void signatureSummary();
 
-    bool useMarkerToNdi(Instruction *i, Value *, int from, int to);
+    bool useMarkerToNdi(Instruction *i);
 
 
     bool replaceInstructionWithNdi(Instruction &I);
@@ -243,17 +243,17 @@ namespace ndi {
   bool Obfuscation::ndiUsingMarker(Module &M) {
     bool codeModified = false;
 
-    Function *markerFunction = M.getFunction("marker");
+    Function *markerFunction = M.getFunction("_Z6markeriii");
 
     if (markerFunction == NULL) {
       std::cout << "No marker function found!\n";
       return false;
     }
 
-    for (Function::user_iterator ui = markerFunction->user_begin();
-         ui != markerFunction->user_end();
-         ++ui) {
-      Instruction *inst = dyn_cast<Instruction>(*ui);
+    Function::user_iterator ui = markerFunction->user_begin();
+    Function::user_iterator uiEnd = markerFunction->user_end();
+    while(ui != uiEnd) {
+      Instruction *inst = dyn_cast<Instruction>(*(ui++));
       unsigned int opcode = inst->getOpcode();
       if ((opcode != Instruction::Invoke) && (opcode != Instruction::Call)) {
         dbgs() << "Error: Unknown instruction!\n" << *inst;
@@ -277,7 +277,7 @@ namespace ndi {
         dbgs() << "Range " << from << " is bigger/equal to " << to << "\n";
         continue;
       }
-      codeModified = useMarkerToNdi(inst, marker, from, to) || codeModified;
+      codeModified = useMarkerToNdi(inst) || codeModified;
 //      std::cout << "marker result: " << result << "\n";
     }
 
@@ -294,11 +294,12 @@ namespace ndi {
   }
 
   bool
-  Obfuscation::useMarkerToNdi(Instruction *i, Value *marker, int from, int to) {
+  Obfuscation::useMarkerToNdi(Instruction *i) {
     BasicBlock::iterator obfIterator(i);
     BasicBlock::iterator end = i->getParent()->end();
     obfIterator++; // skip current instruction
 
+    // Looking at next instructions until find one can be obfuscated
     while (obfIterator != end) {
       Instruction &obfInstruction = *(obfIterator++);
       std::string signature = instructionSignature(obfInstruction);

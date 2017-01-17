@@ -1279,8 +1279,7 @@ $_ZTS6b2Draw = comdat any
 @.str.479 = private unnamed_addr constant [16 x i8] c"def->count >= 3\00", align 1
 @.str.1.480 = private unnamed_addr constant [66 x i8] c"/home/alan/workspace/playground/Box2D/Box2D/Box2D/Rope/b2Rope.cpp\00", align 1
 @__PRETTY_FUNCTION__._ZN6b2Rope10InitializeEPK9b2RopeDef = private unnamed_addr constant [43 x i8] c"void b2Rope::Initialize(const b2RopeDef *)\00", align 1
-@.str.34 = private unnamed_addr constant [8 x i8] c"b = %d\0A\00", align 1
-@.str.1.35 = private unnamed_addr constant [19 x i8] c"%4.2f %4.2f %4.2f\0A\00", align 1
+@.str.34 = private unnamed_addr constant [19 x i8] c"%4.2f %4.2f %4.2f\0A\00", align 1
 
 @_ZN12b2ChainShapeD1Ev = alias void (%class.b2ChainShape*), void (%class.b2ChainShape*)* @_ZN12b2ChainShapeD2Ev
 @_ZN15b2DistanceJointC1EPK18b2DistanceJointDef = alias void (%class.b2DistanceJoint*, %struct.b2DistanceJointDef*), void (%class.b2DistanceJoint*, %struct.b2DistanceJointDef*)* @_ZN15b2DistanceJointC2EPK18b2DistanceJointDef
@@ -60007,7 +60006,7 @@ define void @_ZNK6b2Rope4DrawEP6b2Draw(%class.b2Rope* %this, %class.b2Draw* %dra
 }
 
 ; Function Attrs: nounwind uwtable
-define void @marker(i32 %x, i32 %from, i32 %to) #2 {
+define void @_Z6markeriii(i32 %x, i32 %from, i32 %to) #2 {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i32, align 4
@@ -60017,34 +60016,11 @@ define void @marker(i32 %x, i32 %from, i32 %to) #2 {
   ret void
 }
 
-; Function Attrs: uwtable
-define void @_Z4testii(i32 %i, i32 %j) #0 {
-  %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
-  %c = alloca i32, align 4
-  %b = alloca i32, align 4
-  store i32 %i, i32* %1, align 4
-  store i32 %j, i32* %2, align 4
-  store i32 4, i32* %c, align 4
-  %3 = load i32, i32* %1, align 4
-  %4 = load i32, i32* %2, align 4
-  %5 = add nsw i32 %3, %4
-  store i32 %5, i32* %b, align 4
-  %6 = load i32, i32* %c, align 4
-  call void @marker(i32 %6, i32 3, i32 8)
-  %7 = load i32, i32* %b, align 4
-  %8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([8 x i8], [8 x i8]* @.str.34, i32 0, i32 0), i32 %7)
-  ret void
-}
-
-declare i32 @printf(i8*, ...) #4
-
 ; Function Attrs: norecurse uwtable
 define i32 @main(i32 %argc, i8** %argv) #13 personality i8* bitcast (i32 (...)* @__gxx_personality_v0 to i8*) {
   %1 = alloca i32, align 4
   %2 = alloca i32, align 4
   %3 = alloca i8**, align 8
-  %i = alloca i32, align 4
   %gravity = alloca %struct.b2Vec2, align 4
   %world = alloca %class.b2World, align 8
   %groundBodyDef = alloca %struct.b2BodyDef, align 8
@@ -60059,214 +60035,214 @@ define i32 @main(i32 %argc, i8** %argv) #13 personality i8* bitcast (i32 (...)* 
   %timeStep = alloca float, align 4
   %velocityIterations = alloca i32, align 4
   %positionIterations = alloca i32, align 4
-  %i1 = alloca i32, align 4
+  %i = alloca i32, align 4
   %position = alloca %struct.b2Vec2, align 4
   %angle = alloca float, align 4
   store i32 0, i32* %1, align 4
   store i32 %argc, i32* %2, align 4
   store i8** %argv, i8*** %3, align 8
-  store i32 4, i32* %i, align 4
-  %6 = load i32, i32* %i, align 4
-  call void @marker(i32 %6, i32 3, i32 8)
-  call void @_Z4testii(i32 2, i32 3)
   call void @_ZN6b2Vec2C2Eff(%struct.b2Vec2* %gravity, float 0.000000e+00, float -1.000000e+01)
   call void @_ZN7b2WorldC1ERK6b2Vec2(%class.b2World* %world, %struct.b2Vec2* dereferenceable(8) %gravity)
   invoke void @_ZN9b2BodyDefC2Ev(%struct.b2BodyDef* %groundBodyDef)
-          to label %7 unwind label %63
+          to label %6 unwind label %68
 
-; <label>:7                                       ; preds = %0
-  %8 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %groundBodyDef, i32 0, i32 1
-  invoke void @_ZN6b2Vec23SetEff(%struct.b2Vec2* %8, float 0.000000e+00, float -1.000000e+01)
-          to label %9 unwind label %63
+; <label>:6                                       ; preds = %0
+  %7 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %groundBodyDef, i32 0, i32 1
+  invoke void @_ZN6b2Vec23SetEff(%struct.b2Vec2* %7, float 0.000000e+00, float -1.000000e+01)
+          to label %8 unwind label %68
 
-; <label>:9                                       ; preds = %7
-  %10 = invoke %class.b2Body* @_ZN7b2World10CreateBodyEPK9b2BodyDef(%class.b2World* %world, %struct.b2BodyDef* %groundBodyDef)
-          to label %11 unwind label %63
+; <label>:8                                       ; preds = %6
+  %9 = invoke %class.b2Body* @_ZN7b2World10CreateBodyEPK9b2BodyDef(%class.b2World* %world, %struct.b2BodyDef* %groundBodyDef)
+          to label %10 unwind label %68
 
-; <label>:11                                      ; preds = %9
-  store %class.b2Body* %10, %class.b2Body** %groundBody, align 8
+; <label>:10                                      ; preds = %8
+  store %class.b2Body* %9, %class.b2Body** %groundBody, align 8
   invoke void @_ZN14b2PolygonShapeC2Ev(%class.b2PolygonShape* %groundBox)
-          to label %12 unwind label %63
+          to label %11 unwind label %68
+
+; <label>:11                                      ; preds = %10
+  invoke void @_ZN14b2PolygonShape8SetAsBoxEff(%class.b2PolygonShape* %groundBox, float 5.000000e+01, float 1.000000e+01)
+          to label %12 unwind label %72
 
 ; <label>:12                                      ; preds = %11
-  invoke void @_ZN14b2PolygonShape8SetAsBoxEff(%class.b2PolygonShape* %groundBox, float 5.000000e+01, float 1.000000e+01)
-          to label %13 unwind label %67
+  %13 = load %class.b2Body*, %class.b2Body** %groundBody, align 8
+  %14 = bitcast %class.b2PolygonShape* %groundBox to %class.b2Shape*
+  %15 = invoke %class.b2Fixture* @_ZN6b2Body13CreateFixtureEPK7b2Shapef(%class.b2Body* %13, %class.b2Shape* %14, float 0.000000e+00)
+          to label %16 unwind label %72
 
-; <label>:13                                      ; preds = %12
-  %14 = load %class.b2Body*, %class.b2Body** %groundBody, align 8
-  %15 = bitcast %class.b2PolygonShape* %groundBox to %class.b2Shape*
-  %16 = invoke %class.b2Fixture* @_ZN6b2Body13CreateFixtureEPK7b2Shapef(%class.b2Body* %14, %class.b2Shape* %15, float 0.000000e+00)
-          to label %17 unwind label %67
-
-; <label>:17                                      ; preds = %13
+; <label>:16                                      ; preds = %12
   invoke void @_ZN9b2BodyDefC2Ev(%struct.b2BodyDef* %bodyDef)
-          to label %18 unwind label %67
+          to label %17 unwind label %72
 
-; <label>:18                                      ; preds = %17
-  %19 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %bodyDef, i32 0, i32 0
-  store i32 2, i32* %19, align 8
-  %20 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %bodyDef, i32 0, i32 1
-  invoke void @_ZN6b2Vec23SetEff(%struct.b2Vec2* %20, float 0.000000e+00, float 4.000000e+00)
-          to label %21 unwind label %67
+; <label>:17                                      ; preds = %16
+  %18 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %bodyDef, i32 0, i32 0
+  store i32 2, i32* %18, align 8
+  %19 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %bodyDef, i32 0, i32 1
+  invoke void @_ZN6b2Vec23SetEff(%struct.b2Vec2* %19, float 0.000000e+00, float 4.000000e+00)
+          to label %20 unwind label %72
 
-; <label>:21                                      ; preds = %18
-  %22 = invoke %class.b2Body* @_ZN7b2World10CreateBodyEPK9b2BodyDef(%class.b2World* %world, %struct.b2BodyDef* %bodyDef)
-          to label %23 unwind label %67
+; <label>:20                                      ; preds = %17
+  %21 = invoke %class.b2Body* @_ZN7b2World10CreateBodyEPK9b2BodyDef(%class.b2World* %world, %struct.b2BodyDef* %bodyDef)
+          to label %22 unwind label %72
 
-; <label>:23                                      ; preds = %21
-  store %class.b2Body* %22, %class.b2Body** %body, align 8
+; <label>:22                                      ; preds = %20
+  store %class.b2Body* %21, %class.b2Body** %body, align 8
   invoke void @_ZN14b2PolygonShapeC2Ev(%class.b2PolygonShape* %dynamicBox)
-          to label %24 unwind label %67
+          to label %23 unwind label %72
+
+; <label>:23                                      ; preds = %22
+  invoke void @_ZN14b2PolygonShape8SetAsBoxEff(%class.b2PolygonShape* %dynamicBox, float 1.000000e+00, float 1.000000e+00)
+          to label %24 unwind label %76
 
 ; <label>:24                                      ; preds = %23
-  invoke void @_ZN14b2PolygonShape8SetAsBoxEff(%class.b2PolygonShape* %dynamicBox, float 1.000000e+00, float 1.000000e+00)
-          to label %25 unwind label %71
+  invoke void @_ZN12b2FixtureDefC2Ev(%struct.b2FixtureDef* %fixtureDef)
+          to label %25 unwind label %76
 
 ; <label>:25                                      ; preds = %24
-  invoke void @_ZN12b2FixtureDefC2Ev(%struct.b2FixtureDef* %fixtureDef)
-          to label %26 unwind label %71
-
-; <label>:26                                      ; preds = %25
-  %27 = bitcast %class.b2PolygonShape* %dynamicBox to %class.b2Shape*
-  %28 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 0
-  store %class.b2Shape* %27, %class.b2Shape** %28, align 8
+  %26 = bitcast %class.b2PolygonShape* %dynamicBox to %class.b2Shape*
+  %27 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 0
+  store %class.b2Shape* %26, %class.b2Shape** %27, align 8
+  %28 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 4
+  store float 1.000000e+00, float* %28, align 8
   %29 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 4
-  store float 1.000000e+00, float* %29, align 8
-  %30 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 2
-  store float 0x3FD3333340000000, float* %30, align 8
-  %31 = load %class.b2Body*, %class.b2Body** %body, align 8
-  %32 = invoke %class.b2Fixture* @_ZN6b2Body13CreateFixtureEPK12b2FixtureDef(%class.b2Body* %31, %struct.b2FixtureDef* %fixtureDef)
-          to label %33 unwind label %71
+  %30 = load float, float* %29, align 8
+  %31 = fptosi float %30 to i32
+  call void @_Z6markeriii(i32 %31, i32 0, i32 4) #3
+  %32 = getelementptr inbounds %struct.b2FixtureDef, %struct.b2FixtureDef* %fixtureDef, i32 0, i32 2
+  store float 0x3FD3333340000000, float* %32, align 8
+  %33 = load %class.b2Body*, %class.b2Body** %body, align 8
+  %34 = invoke %class.b2Fixture* @_ZN6b2Body13CreateFixtureEPK12b2FixtureDef(%class.b2Body* %33, %struct.b2FixtureDef* %fixtureDef)
+          to label %35 unwind label %76
 
-; <label>:33                                      ; preds = %26
+; <label>:35                                      ; preds = %25
   store float 0x3F91111120000000, float* %timeStep, align 4
   store i32 6, i32* %velocityIterations, align 4
   store i32 2, i32* %positionIterations, align 4
-  store i32 0, i32* %i1, align 4
-  br label %34
+  store i32 0, i32* %i, align 4
+  br label %36
 
-; <label>:34                                      ; preds = %60, %33
-  %35 = load i32, i32* %i1, align 4
-  %36 = icmp slt i32 %35, 60
-  br i1 %36, label %37, label %75
+; <label>:36                                      ; preds = %65, %35
+  %37 = load i32, i32* %i, align 4
+  %38 = icmp slt i32 %37, 60
+  br i1 %38, label %39, label %80
 
-; <label>:37                                      ; preds = %34
-  %38 = load float, float* %timeStep, align 4
-  %39 = load i32, i32* %velocityIterations, align 4
-  %40 = load i32, i32* %positionIterations, align 4
-  invoke void @_ZN7b2World4StepEfii(%class.b2World* %world, float %38, i32 %39, i32 %40)
-          to label %41 unwind label %71
+; <label>:39                                      ; preds = %36
+  %40 = getelementptr inbounds %struct.b2BodyDef, %struct.b2BodyDef* %bodyDef, i32 0, i32 14
+  %41 = load float, float* %40, align 8
+  %42 = fptosi float %41 to i32
+  call void @_Z6markeriii(i32 %42, i32 0, i32 2) #3
+  %43 = load float, float* %timeStep, align 4
+  %44 = load i32, i32* %velocityIterations, align 4
+  %45 = load i32, i32* %positionIterations, align 4
+  invoke void @_ZN7b2World4StepEfii(%class.b2World* %world, float %43, i32 %44, i32 %45)
+          to label %46 unwind label %76
 
-; <label>:41                                      ; preds = %37
-  %42 = load %class.b2Body*, %class.b2Body** %body, align 8
-  %43 = invoke dereferenceable(8) %struct.b2Vec2* @_ZNK6b2Body11GetPositionEv(%class.b2Body* %42)
-          to label %44 unwind label %71
-
-; <label>:44                                      ; preds = %41
-  %45 = bitcast %struct.b2Vec2* %position to i8*
-  %46 = bitcast %struct.b2Vec2* %43 to i8*
-  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %45, i8* %46, i64 8, i32 4, i1 false)
+; <label>:46                                      ; preds = %39
   %47 = load %class.b2Body*, %class.b2Body** %body, align 8
-  %48 = invoke float @_ZNK6b2Body8GetAngleEv(%class.b2Body* %47)
-          to label %49 unwind label %71
+  %48 = invoke dereferenceable(8) %struct.b2Vec2* @_ZNK6b2Body11GetPositionEv(%class.b2Body* %47)
+          to label %49 unwind label %76
 
-; <label>:49                                      ; preds = %44
-  store float %48, float* %angle, align 4
-  %50 = getelementptr inbounds %struct.b2Vec2, %struct.b2Vec2* %position, i32 0, i32 0
-  %51 = load float, float* %50, align 4
-  %52 = fpext float %51 to double
-  %53 = getelementptr inbounds %struct.b2Vec2, %struct.b2Vec2* %position, i32 0, i32 1
-  %54 = load float, float* %53, align 4
-  %55 = fpext float %54 to double
-  %56 = load float, float* %angle, align 4
+; <label>:49                                      ; preds = %46
+  %50 = bitcast %struct.b2Vec2* %position to i8*
+  %51 = bitcast %struct.b2Vec2* %48 to i8*
+  call void @llvm.memcpy.p0i8.p0i8.i64(i8* %50, i8* %51, i64 8, i32 4, i1 false)
+  %52 = load %class.b2Body*, %class.b2Body** %body, align 8
+  %53 = invoke float @_ZNK6b2Body8GetAngleEv(%class.b2Body* %52)
+          to label %54 unwind label %76
+
+; <label>:54                                      ; preds = %49
+  store float %53, float* %angle, align 4
+  %55 = getelementptr inbounds %struct.b2Vec2, %struct.b2Vec2* %position, i32 0, i32 0
+  %56 = load float, float* %55, align 4
   %57 = fpext float %56 to double
-  %58 = invoke i32 (i8*, ...) @printf(i8* getelementptr inbounds ([19 x i8], [19 x i8]* @.str.1.35, i32 0, i32 0), double %52, double %55, double %57)
-          to label %59 unwind label %71
+  %58 = getelementptr inbounds %struct.b2Vec2, %struct.b2Vec2* %position, i32 0, i32 1
+  %59 = load float, float* %58, align 4
+  %60 = fpext float %59 to double
+  %61 = load float, float* %angle, align 4
+  %62 = fpext float %61 to double
+  %63 = invoke i32 (i8*, ...) @printf(i8* getelementptr inbounds ([19 x i8], [19 x i8]* @.str.34, i32 0, i32 0), double %57, double %60, double %62)
+          to label %64 unwind label %76
 
-; <label>:59                                      ; preds = %49
-  br label %60
+; <label>:64                                      ; preds = %54
+  br label %65
 
-; <label>:60                                      ; preds = %59
-  %61 = load i32, i32* %i1, align 4
-  %62 = add nsw i32 %61, 1
-  store i32 %62, i32* %i1, align 4
-  br label %34
+; <label>:65                                      ; preds = %64
+  %66 = load i32, i32* %i, align 4
+  %67 = add nsw i32 %66, 1
+  store i32 %67, i32* %i, align 4
+  br label %36
 
-; <label>:63                                      ; preds = %77, %11, %9, %7, %0
-  %64 = landingpad { i8*, i32 }
+; <label>:68                                      ; preds = %81, %10, %8, %6, %0
+  %69 = landingpad { i8*, i32 }
           cleanup
-  %65 = extractvalue { i8*, i32 } %64, 0
-  store i8* %65, i8** %4, align 8
-  %66 = extractvalue { i8*, i32 } %64, 1
-  store i32 %66, i32* %5, align 4
-  br label %83
+  %70 = extractvalue { i8*, i32 } %69, 0
+  store i8* %70, i8** %4, align 8
+  %71 = extractvalue { i8*, i32 } %69, 1
+  store i32 %71, i32* %5, align 4
+  br label %87
 
-; <label>:67                                      ; preds = %76, %23, %21, %18, %17, %13, %12
-  %68 = landingpad { i8*, i32 }
+; <label>:72                                      ; preds = %80, %22, %20, %17, %16, %12, %11
+  %73 = landingpad { i8*, i32 }
           cleanup
-  %69 = extractvalue { i8*, i32 } %68, 0
-  store i8* %69, i8** %4, align 8
-  %70 = extractvalue { i8*, i32 } %68, 1
-  store i32 %70, i32* %5, align 4
-  br label %81
-
-; <label>:71                                      ; preds = %75, %49, %44, %41, %37, %26, %25, %24
-  %72 = landingpad { i8*, i32 }
-          cleanup
-  %73 = extractvalue { i8*, i32 } %72, 0
-  store i8* %73, i8** %4, align 8
-  %74 = extractvalue { i8*, i32 } %72, 1
-  store i32 %74, i32* %5, align 4
-  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %dynamicBox)
-          to label %78 unwind label %90
-
-; <label>:75                                      ; preds = %34
-  invoke void @_Z4testii(i32 4, i32 6)
-          to label %76 unwind label %71
-
-; <label>:76                                      ; preds = %75
-  store i32 0, i32* %1, align 4
-  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %dynamicBox)
-          to label %77 unwind label %67
-
-; <label>:77                                      ; preds = %76
-  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %groundBox)
-          to label %79 unwind label %63
-
-; <label>:78                                      ; preds = %71
-  br label %81
-
-; <label>:79                                      ; preds = %77
-  call void @_ZN7b2WorldD1Ev(%class.b2World* %world)
-  %80 = load i32, i32* %1, align 4
-  ret i32 %80
-
-; <label>:81                                      ; preds = %78, %67
-  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %groundBox)
-          to label %82 unwind label %90
-
-; <label>:82                                      ; preds = %81
-  br label %83
-
-; <label>:83                                      ; preds = %82, %63
-  invoke void @_ZN7b2WorldD1Ev(%class.b2World* %world)
-          to label %84 unwind label %90
-
-; <label>:84                                      ; preds = %83
+  %74 = extractvalue { i8*, i32 } %73, 0
+  store i8* %74, i8** %4, align 8
+  %75 = extractvalue { i8*, i32 } %73, 1
+  store i32 %75, i32* %5, align 4
   br label %85
 
-; <label>:85                                      ; preds = %84
-  %86 = load i8*, i8** %4, align 8
-  %87 = load i32, i32* %5, align 4
-  %88 = insertvalue { i8*, i32 } undef, i8* %86, 0
-  %89 = insertvalue { i8*, i32 } %88, i32 %87, 1
-  resume { i8*, i32 } %89
+; <label>:76                                      ; preds = %54, %49, %46, %39, %25, %24, %23
+  %77 = landingpad { i8*, i32 }
+          cleanup
+  %78 = extractvalue { i8*, i32 } %77, 0
+  store i8* %78, i8** %4, align 8
+  %79 = extractvalue { i8*, i32 } %77, 1
+  store i32 %79, i32* %5, align 4
+  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %dynamicBox)
+          to label %82 unwind label %94
 
-; <label>:90                                      ; preds = %83, %81, %71
-  %91 = landingpad { i8*, i32 }
+; <label>:80                                      ; preds = %36
+  store i32 0, i32* %1, align 4
+  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %dynamicBox)
+          to label %81 unwind label %72
+
+; <label>:81                                      ; preds = %80
+  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %groundBox)
+          to label %83 unwind label %68
+
+; <label>:82                                      ; preds = %76
+  br label %85
+
+; <label>:83                                      ; preds = %81
+  call void @_ZN7b2WorldD1Ev(%class.b2World* %world)
+  %84 = load i32, i32* %1, align 4
+  ret i32 %84
+
+; <label>:85                                      ; preds = %82, %72
+  invoke void @_ZN14b2PolygonShapeD2Ev(%class.b2PolygonShape* %groundBox)
+          to label %86 unwind label %94
+
+; <label>:86                                      ; preds = %85
+  br label %87
+
+; <label>:87                                      ; preds = %86, %68
+  invoke void @_ZN7b2WorldD1Ev(%class.b2World* %world)
+          to label %88 unwind label %94
+
+; <label>:88                                      ; preds = %87
+  br label %89
+
+; <label>:89                                      ; preds = %88
+  %90 = load i8*, i8** %4, align 8
+  %91 = load i32, i32* %5, align 4
+  %92 = insertvalue { i8*, i32 } undef, i8* %90, 0
+  %93 = insertvalue { i8*, i32 } %92, i32 %91, 1
+  resume { i8*, i32 } %93
+
+; <label>:94                                      ; preds = %87, %85, %76
+  %95 = landingpad { i8*, i32 }
           catch i8* null
-  %92 = extractvalue { i8*, i32 } %91, 0
-  call void @__clang_call_terminate(i8* %92) #15
+  %96 = extractvalue { i8*, i32 } %95, 0
+  call void @__clang_call_terminate(i8* %96) #15
   unreachable
 }
 
@@ -60309,6 +60285,8 @@ define linkonce_odr void @_ZN9b2BodyDefC2Ev(%struct.b2BodyDef* %this) unnamed_ad
   store float 1.000000e+00, float* %18, align 8
   ret void
 }
+
+declare i32 @printf(i8*, ...) #4
 
 attributes #0 = { uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
 attributes #1 = { inlinehint uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
