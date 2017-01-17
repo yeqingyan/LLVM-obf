@@ -18,15 +18,18 @@ LAST_OTHER_INST(65)
 #ifdef NDI_PATCH_INSTRUCTIONS__H
 class NdiInst : public Instruction {
   NdiInst(const NdiInst &I);
-  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
-                          Instruction *InsertBefore = nullptr);
-  NdiInst(Value *S1, Value *S2, Type *Ty, const Twine &Name,
-                          BasicBlock *InsertAtEnd);
+  NdiInst(Value *S1, Value *S2, Value *marker, Type *Ty, const Twine &Name = "",
+          Instruction *InsertBefore = nullptr);
+  NdiInst(Value *S1, Value *S2, Value *marker, Type *Ty, const Twine &Name,
+          BasicBlock *InsertAtEnd);
+  NdiInst(int NdiType, Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
+          Instruction *InsertBefore = nullptr);
+  NdiInst(int NdiType, Value *S1, Value *S2, Type *Ty, const Twine &Name,
+          BasicBlock *InsertAtEnd);
   NdiInst(Value *S1, Type *Ty, const Twine &Name = "",
-                          Instruction *InsertBefore = nullptr);
+          Instruction *InsertBefore = nullptr);
   NdiInst(Value *S1, Type *Ty, const Twine &Name,
-                          BasicBlock *InsertAtEnd);
-//  void *operator new(size_t, unsigned) = delete;
+          BasicBlock *InsertAtEnd);
 
 protected:
   // Note: Instruction needs to be a friend here to call cloneImpl.
@@ -34,18 +37,26 @@ protected:
   NdiInst *cloneImpl() const;
 
 public:
-//  void *operator new(size_t s) {
-//    return User::operator new(s, 3);
-//  }
-
-  static NdiInst* Create(Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
+  int NdiType;
+  static NdiInst* Create(Value *S1, Value *S2, Value *maker, Type *Ty, const Twine &Name = "",
                           Instruction *InsertBefore = nullptr) {
-    return new(2) NdiInst(S1, S2, Ty, Name, InsertBefore); }
+    return new(3) NdiInst(S1, S2, maker, Ty, Name, InsertBefore); }
 
-  static NdiInst* Create(Value *S1, Value *S2, Type *Ty, const Twine &Name,
+  static NdiInst* Create(Value *S1, Value *S2, Value *maker, Type *Ty, const Twine &Name,
                           BasicBlock *InsertAtEnd) {
-    return new(2) NdiInst(S1, S2, Ty, Name, InsertAtEnd); }
+    return new(3) NdiInst(S1, S2, maker, Ty, Name, InsertAtEnd); }
 
+  // NDI with 2 operands
+  // The Value S2 could be the second operands or the marker.
+  static NdiInst* Create(int NdiType, Value *S1, Value *S2, Type *Ty, const Twine &Name = "",
+                          Instruction *InsertBefore = nullptr) {
+    return new(2) NdiInst(NdiType, S1, S2, Ty, Name, InsertBefore); }
+
+  static NdiInst* Create(int NdiType, Value *S1, Value *S2, Type *Ty, const Twine &Name,
+                          BasicBlock *InsertAtEnd) {
+    return new(2) NdiInst(NdiType, S1, S2, Ty, Name, InsertAtEnd); }
+
+  // NDI with 1 operands
   static NdiInst* Create(Value *S1, Type *Ty, const Twine &Name = "",
                           Instruction *InsertBefore = nullptr) {
     return new(1) NdiInst(S1, Ty, Name, InsertBefore); }
@@ -90,7 +101,7 @@ case lltok::kw_ndi:            return ParseNdi(Inst, PFS, KeywordVal);
 int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
                        unsigned Opc) {
   LocTy Loc;
-  Value *OP1, *OP2;
+  Value *OP1, *OP2, *marker;
   unsigned int NdiType;
   Type *Ty;
   // Write NDI type
@@ -104,11 +115,19 @@ int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
     if (ParseToken(lltok::comma, "expected comma after Ndi return type") ||
         ParseTypeAndValue(OP1, Loc, PFS))
       return true;
-  } else if (NdiType == 2) {
+  } else if ((NdiType == 2) || (NdiType == 3)) {
     if (ParseToken(lltok::comma, "expected comma after Ndi return type") ||
         ParseTypeAndValue(OP1, Loc, PFS) ||
         ParseToken(lltok::comma, "expected comma after op1") ||
         ParseTypeAndValue(OP2, Loc, PFS))
+      return true;
+  } else if (NdiType == 4) {
+    if (ParseToken(lltok::comma, "expected comma after Ndi return type") ||
+        ParseTypeAndValue(OP1, Loc, PFS) ||
+        ParseToken(lltok::comma, "expected comma after op1") ||
+        ParseTypeAndValue(OP2, Loc, PFS) ||
+        ParseToken(lltok::comma, "expected comma after op2") ||
+        ParseTypeAndValue(marker, Loc, PFS))
       return true;
   } else {
     return Error(Loc, "invalid operand number");
@@ -116,9 +135,12 @@ int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
 
   if (NdiType == 1) {
     Inst = NdiInst::Create(OP1, Ty);
-  } else {
-    Inst = NdiInst::Create(OP1, OP2, Ty);
+  } else if ((NdiType == 2) || (NdiType == 3)){
+    Inst = NdiInst::Create(NdiType, OP1, OP2, Ty);
+  } else if (NdiType == 4) {
+    Inst = NdiInst::Create(OP1, OP2, marker, Ty);
   }
+
   return false;
 }
 #endif
@@ -126,7 +148,7 @@ int LLParser::ParseNdi(Instruction *&Inst, PerFunctionState &PFS,
 #ifdef NDI_PATCH_ASMWRITER_CPP
 if (isa<NdiInst>(I)) {
   Out << ' ';
-  Out << I.getNumOperands();
+  Out << cast<NdiInst>(I).NdiType;
   Out << ", ";
   TypePrinter.print(I.getType(), Out);
   Out << ',';
@@ -144,7 +166,7 @@ kw_ndi,
 
 #ifdef NDI_PATCH_BITCODEREADER_CPP
 case bitc::FUNC_CODE_NDI: {
-  Value *Op1, *Op2;
+  Value *Op1, *Op2, *Marker;
   unsigned int NDIType = Record[0];
   Type *Ty = getTypeByID(Record[1]);
   unsigned OpNum = 2;
@@ -152,9 +174,15 @@ case bitc::FUNC_CODE_NDI: {
     if (getValueTypePair(Record, OpNum, NextValueNo, Op1)) {
       return error("Invalid NDI Op1");
     }
-  } else if (NDIType == 2) {
+  } else if ((NDIType == 2) || (NDIType == 3)) {
     if (getValueTypePair(Record, OpNum, NextValueNo, Op1) ||
         getValueTypePair(Record, OpNum, NextValueNo, Op2)) {
+      return error("Invalid NDI Op2");
+    }
+  } else if (NDIType == 4){
+    if (getValueTypePair(Record, OpNum, NextValueNo, Op1) ||
+        getValueTypePair(Record, OpNum, NextValueNo, Op2) ||
+        getValueTypePair(Record, OpNum, NextValueNo, Marker)) {
       return error("Invalid NDI Op2");
     }
   } else {
@@ -163,8 +191,10 @@ case bitc::FUNC_CODE_NDI: {
 
   if (NDIType == 1) {
     I = NdiInst::Create(Op1, Ty);
-  } else if (NDIType == 2) {
-    I = NdiInst::Create(Op1, Op2, Ty);
+  } else if ((NDIType == 2) || (NDIType == 3)) {
+    I = NdiInst::Create(NDIType, Op1, Op2, Ty);
+  } else if (NDIType == 4){
+    I = NdiInst::Create(Op1, Op2, Marker, Ty);
   } else {
     return error("Unknown NDI Type");
   }
@@ -181,9 +211,13 @@ case Instruction::Ndi: {
   Vals.push_back(VE.getTypeID(I.getType()));
   if (NDIType == 1) {
     pushValueAndType(I.getOperand(0), InstID, Vals);
-  } else if (NDIType == 2) {
+  } else if ((NDIType == 2) || (NDIType == 3)) {
     pushValueAndType(I.getOperand(0), InstID, Vals);
     pushValueAndType(I.getOperand(1), InstID, Vals);
+  } else if (NDIType == 4){
+    pushValueAndType(I.getOperand(0), InstID, Vals);
+    pushValueAndType(I.getOperand(1), InstID, Vals);
+    pushValueAndType(I.getOperand(2), InstID, Vals);
   } else {
     report_fatal_error("Unexpected NDI Type");
   }
@@ -206,19 +240,7 @@ void visitNdi(const NdiInst &I);
 
 #ifdef NDI_PATCH_EXECUTION_CPP
 void Interpreter::visitNdiInst(NdiInst &I) {
-  int index = 0;
-  BasicBlock::iterator blockIterator = I.getParent()->begin();
-  while ((blockIterator != I.getParent()->end()) &&
-         ((&*blockIterator) != &I)) {
-    index += 1;
-    blockIterator++;
-  }
-  switch (index) {
-    #include "ndi-interpreter-patch.h"
-    default:
-      llvm_unreachable("Unhandled ndi instruction");
-      break;
-  }
+  #include "ndi-interpreter-patch.h"
 }
 #endif
 
@@ -233,10 +255,41 @@ case Ndi:            return "ndi";
 #ifdef NDI_PATCH_INSTRUCTIONS_CPP
 NdiInst::NdiInst(const NdiInst &I)
     : Instruction(I.getType(), Instruction::Ndi, OperandTraits<NdiInst>::op_end(this)-I.getNumOperands(), I.getNumOperands()) {
+  this->NdiType = I.NdiType;
   std::copy(I.op_begin(), I.op_end(), op_begin());
 }
 
-NdiInst::NdiInst(Value *S1, Value *S2,
+// Ndi with three oeprand
+NdiInst::NdiInst(Value *S1, Value *S2, Value *marker,
+                 Type *Ty, const Twine &Name,
+                 Instruction *InsertBefore)
+    : Instruction(Ty, Instruction::Ndi,
+                  OperandTraits<NdiInst>::op_end(this)-3,
+                  3,
+                  InsertBefore) {
+  Op<0>() = S1;
+  Op<1>() = S2;
+  Op<2>() = marker;
+  this->NdiType = 4;
+  setName(Name);
+}
+
+NdiInst::NdiInst(Value *S1, Value *S2, Value *marker,
+                 Type *Ty, const Twine &Name,
+                 BasicBlock *InsertAtEnd)
+    : Instruction(Ty, Instruction::Ndi,
+                  OperandTraits<NdiInst>::op_end(this)-3,
+                  3,
+                  InsertAtEnd) {
+  Op<0>() = S1;
+  Op<1>() = S2;
+  Op<2>() = marker;
+  this->NdiType = 4;
+  setName(Name);
+}
+
+// Ndi with two operand
+NdiInst::NdiInst(int NdiType, Value *S1, Value *S2,
                  Type *Ty, const Twine &Name,
                  Instruction *InsertBefore)
     : Instruction(Ty, Instruction::Ndi,
@@ -245,12 +298,11 @@ NdiInst::NdiInst(Value *S1, Value *S2,
                   InsertBefore) {
   Op<0>() = S1;
   Op<1>() = S2;
-  // Skip check operand's type
-//  NdiNumOperands = 2;
+  this->NdiType = NdiType;
   setName(Name);
 }
 
-NdiInst::NdiInst(Value *S1, Value *S2,
+NdiInst::NdiInst(int NdiType, Value *S1, Value *S2,
                  Type *Ty, const Twine &Name,
                  BasicBlock *InsertAtEnd)
     : Instruction(Ty, Instruction::Ndi,
@@ -259,11 +311,11 @@ NdiInst::NdiInst(Value *S1, Value *S2,
                   InsertAtEnd) {
   Op<0>() = S1;
   Op<1>() = S2;
-  // Skip check operand's type
-//  NdiNumOperands = 2;
+  this->NdiType = NdiType;
   setName(Name);
 }
 
+// Ndi with one operand
 NdiInst::NdiInst(Value *S1, Type *Ty, const Twine &Name,
                  Instruction *InsertBefore)
     : Instruction(Ty, Instruction::Ndi,
@@ -271,8 +323,7 @@ NdiInst::NdiInst(Value *S1, Type *Ty, const Twine &Name,
                   1,
                   InsertBefore) {
   Op<0>() = S1;
-  // Skip check operand's type
-//  NdiNumOperands = 1;
+  this->NdiType = 1;
   setName(Name);
 }
 
@@ -283,8 +334,7 @@ NdiInst::NdiInst(Value *S1, Type *Ty, const Twine &Name,
                   1,
                   InsertAtEnd) {
   Op<0>() = S1;
-  // Skip check operand's type
-//  NdiNumOperands = 1;
+  this->NdiType = 1;
   setName(Name);
 }
 
