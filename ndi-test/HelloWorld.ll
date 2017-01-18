@@ -1279,7 +1279,10 @@ $_ZTS6b2Draw = comdat any
 @.str.479 = private unnamed_addr constant [16 x i8] c"def->count >= 3\00", align 1
 @.str.1.480 = private unnamed_addr constant [66 x i8] c"/home/alan/workspace/playground/Box2D/Box2D/Box2D/Rope/b2Rope.cpp\00", align 1
 @__PRETTY_FUNCTION__._ZN6b2Rope10InitializeEPK9b2RopeDef = private unnamed_addr constant [43 x i8] c"void b2Rope::Initialize(const b2RopeDef *)\00", align 1
-@.str.34 = private unnamed_addr constant [19 x i8] c"%4.2f %4.2f %4.2f\0A\00", align 1
+@.str.34 = private unnamed_addr constant [29 x i8] c"( x >= from ) && ( x <= to )\00", align 1
+@.str.1.35 = private unnamed_addr constant [70 x i8] c"/home/alan/workspace/playground/Box2D/Box2D/HelloWorld/HelloWorld.cpp\00", align 1
+@__PRETTY_FUNCTION__._Z6markeriii = private unnamed_addr constant [27 x i8] c"void marker(int, int, int)\00", align 1
+@.str.2.36 = private unnamed_addr constant [19 x i8] c"%4.2f %4.2f %4.2f\0A\00", align 1
 
 @_ZN12b2ChainShapeD1Ev = alias void (%class.b2ChainShape*), void (%class.b2ChainShape*)* @_ZN12b2ChainShapeD2Ev
 @_ZN15b2DistanceJointC1EPK18b2DistanceJointDef = alias void (%class.b2DistanceJoint*, %struct.b2DistanceJointDef*), void (%class.b2DistanceJoint*, %struct.b2DistanceJointDef*)* @_ZN15b2DistanceJointC2EPK18b2DistanceJointDef
@@ -60013,6 +60016,27 @@ define void @_Z6markeriii(i32 %x, i32 %from, i32 %to) #2 {
   store i32 %x, i32* %1, align 4
   store i32 %from, i32* %2, align 4
   store i32 %to, i32* %3, align 4
+  %4 = load i32, i32* %1, align 4
+  %5 = load i32, i32* %2, align 4
+  %6 = icmp sge i32 %4, %5
+  br i1 %6, label %7, label %12
+
+; <label>:7                                       ; preds = %0
+  %8 = load i32, i32* %1, align 4
+  %9 = load i32, i32* %3, align 4
+  %10 = icmp sle i32 %8, %9
+  br i1 %10, label %11, label %12
+
+; <label>:11                                      ; preds = %7
+  br label %14
+
+; <label>:12                                      ; preds = %7, %0
+  call void @__assert_fail(i8* getelementptr inbounds ([29 x i8], [29 x i8]* @.str.34, i32 0, i32 0), i8* getelementptr inbounds ([70 x i8], [70 x i8]* @.str.1.35, i32 0, i32 0), i32 26, i8* getelementptr inbounds ([27 x i8], [27 x i8]* @__PRETTY_FUNCTION__._Z6markeriii, i32 0, i32 0)) #15
+  unreachable
+                                                  ; No predecessors!
+  br label %14
+
+; <label>:14                                      ; preds = %13, %11
   ret void
 }
 
@@ -60160,7 +60184,7 @@ define i32 @main(i32 %argc, i8** %argv) #13 personality i8* bitcast (i32 (...)* 
   %60 = fpext float %59 to double
   %61 = load float, float* %angle, align 4
   %62 = fpext float %61 to double
-  %63 = invoke i32 (i8*, ...) @printf(i8* getelementptr inbounds ([19 x i8], [19 x i8]* @.str.34, i32 0, i32 0), double %57, double %60, double %62)
+  %63 = invoke i32 (i8*, ...) @printf(i8* getelementptr inbounds ([19 x i8], [19 x i8]* @.str.2.36, i32 0, i32 0), double %57, double %60, double %62)
           to label %64 unwind label %76
 
 ; <label>:64                                      ; preds = %54

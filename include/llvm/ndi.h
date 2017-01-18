@@ -352,3 +352,7 @@ void Verifier::visitNdiInst(NdiInst &I) {
   visitInstruction(I);
 }
 #endif
+
+#ifdef NDI_PATCH_TARGET_LOWERING_BASE_CPP
+case Ndi: return 0;
+#endif

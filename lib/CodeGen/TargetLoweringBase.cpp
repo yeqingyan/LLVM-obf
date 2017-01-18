@@ -1720,6 +1720,9 @@ int TargetLoweringBase::InstructionOpcodeToISD(unsigned Opcode) const {
   case ExtractValue:   return ISD::MERGE_VALUES;
   case InsertValue:    return ISD::MERGE_VALUES;
   case LandingPad:     return 0;
+#define NDI_PATCH_TARGET_LOWERING_BASE_CPP
+#include "llvm/ndi.h"
+#undef NDI_PATCH_TARGET_LOWERING_BASE_CPP
   }
 
   llvm_unreachable("Unknown instruction type encountered!");

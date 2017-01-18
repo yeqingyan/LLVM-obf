@@ -6,11 +6,10 @@
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-profdata" />
       <config projectName="LLVM" targetName="LLVMDebugInfoDWARF" />
       <config projectName="LLVM" targetName="LLVMOrcJIT" />
-      <config projectName="LLVM" targetName="LLVMBPFAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-naryreassociate-nvptx" />
       <config projectName="LLVM" targetName="LLVMCoroutines" />
       <config projectName="LLVM" targetName="LLVMAMDGPUCodeGen" />
-      <config projectName="LLVM" targetName="LLVMSystemZDisassembler" />
+      <config projectName="LLVM" targetName="check-llvm-object-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips5" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips4" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips3" />
@@ -24,7 +23,6 @@
       <config projectName="LLVM" targetName="check-llvm-transforms-jumpthreading" />
       <config projectName="LLVM" targetName="install-LLVMInstrumentation" />
       <config projectName="LLVM" targetName="install-LLVMMipsAsmParser" />
-      <config projectName="LLVM" targetName="install-llvm-dsymutil" />
       <config projectName="LLVM" targetName="LLVMGlobalISel" />
       <config projectName="LLVM" targetName="check-llvm-transforms-atomicexpand" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopunroll" />
@@ -34,9 +32,12 @@
       <config projectName="LLVM" targetName="install-LLVMARMDesc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-x86" />
       <config projectName="LLVM" targetName="llvm-readobj" />
+      <config projectName="LLVM" targetName="check-llvm-codegen-mir-lanai" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-amdgpu" />
       <config projectName="LLVM" targetName="install-LLVMOrcJIT" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-micromips-dspr3" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-micromips-dspr2" />
+      <config projectName="LLVM" targetName="install-llvm-stress" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopversioning" />
       <config projectName="LLVM" targetName="check-llvm-codegen-webassembly" />
       <config projectName="LLVM" targetName="check-llvm-transforms-gcovprofiling" />
@@ -46,9 +47,9 @@
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32" />
       <config projectName="LLVM" targetName="LLVMX86AsmPrinter" />
       <config projectName="LLVM" targetName="install-LLVMAArch64Info" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-coroutines" />
       <config projectName="LLVM" targetName="LLVMInstrumentation" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir" />
-      <config projectName="LLVM" targetName="LLVMLibDriver" />
       <config projectName="LLVM" targetName="install-LLVMNVPTXInfo" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-size" />
       <config projectName="LLVM" targetName="Kaleidoscope-Ch2" />
@@ -62,23 +63,22 @@
       <config projectName="LLVM" targetName="llvm-ar" />
       <config projectName="LLVM" targetName="install-sancov" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir-aarch64" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-earlycse" />
+      <config projectName="LLVM" targetName="LLVMObject" />
       <config projectName="LLVM" targetName="install-LLVMMCDisassembler" />
       <config projectName="LLVM" targetName="check-llvm-transforms-safestack" />
       <config projectName="LLVM" targetName="install-LLVMHexagonDisassembler" />
       <config projectName="LLVM" targetName="check-llvm-analysis-valuetracking" />
       <config projectName="LLVM" targetName="check-llvm-feature" />
-      <config projectName="LLVM" targetName="check-llvm-analysis-cflaliasanalysis-andersen" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-pgoprofile" />
+      <config projectName="LLVM" targetName="install-LLVMGlobalISel" />
       <config projectName="LLVM" targetName="install-llvm-diff" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopvectorize" />
+      <config projectName="LLVM" targetName="install-LLVMInterpreter" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler" />
       <config projectName="LLVM" targetName="LLVMX86Utils" />
       <config projectName="LLVM" targetName="install-llvm-nm" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-aarch64" />
-      <config projectName="LLVM" targetName="check-llvm-mc-mips-msa" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-loopdataprefetch-powerpc" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-micromips-dsp" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-loadstorevectorizer-nvptx" />
-      <config projectName="LLVM" targetName="install-LLVMVectorize" />
       <config projectName="LLVM" targetName="check-llvm-tools-dsymutil" />
       <config projectName="LLVM" targetName="install-LLVMBPFInfo" />
       <config projectName="LLVM" targetName="check-llvm-transforms-nameanonfunctions" />
@@ -90,7 +90,6 @@
       <config projectName="LLVM" targetName="install-LLVMObject" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir-amdgpu" />
       <config projectName="LLVM" targetName="LLVMPowerPCDisassembler" />
-      <config projectName="LLVM" targetName="install-LLVMAMDGPUDesc" />
       <config projectName="LLVM" targetName="LLVMBPFCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-sanitizercoverage" />
       <config projectName="LLVM" targetName="check-llvm-mc-x86-alignedbundling" />
@@ -106,6 +105,7 @@
       <config projectName="LLVM" targetName="check-llvm-transforms-loopvectorize-aarch64" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-eva" />
       <config projectName="LLVM" targetName="llvm-stress" />
+      <config projectName="LLVM" targetName="install-LLVMPowerPCDesc" />
       <config projectName="LLVM" targetName="install-LLVMAnalysis" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir-mips" />
       <config projectName="LLVM" targetName="check-llvm-analysis" />
@@ -122,33 +122,35 @@
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-arm" />
       <config projectName="LLVM" targetName="LLVMPowerPCDesc" />
       <config projectName="LLVM" targetName="LLVMRuntimeDyld" />
-      <config projectName="LLVM" targetName="check-llvm-bindings" />
       <config projectName="LLVM" targetName="DebugInfoDWARFTests" />
       <config projectName="LLVM" targetName="check-llvm-analysis-cflaliasanalysis-steensgaard" />
-      <config projectName="LLVM" targetName="install-LLVMMipsDesc" />
+      <config projectName="LLVM" targetName="check-llvm-examples" />
+      <config projectName="LLVM" targetName="BitcodeTests" />
       <config projectName="LLVM" targetName="ProfileDataTests" />
       <config projectName="LLVM" targetName="LLVMVectorize" />
-      <config projectName="LLVM" targetName="install-LLVMSystemZDisassembler" />
+      <config projectName="LLVM" targetName="install-LLVMipo" />
       <config projectName="LLVM" targetName="install-LLVMMSP430CodeGen" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips" />
-      <config projectName="LLVM" targetName="check-llvm-tools-gold-x86" />
+      <config projectName="LLVM" targetName="check-llvm-tools-gold-powerpc" />
+      <config projectName="LLVM" targetName="check-llvm-mc-elf" />
       <config projectName="LLVM" targetName="LLVMSparcDisassembler" />
-      <config projectName="LLVM" targetName="LLVMObject" />
-      <config projectName="LLVM" targetName="install-LLVMHexagonDesc" />
-      <config projectName="LLVM" targetName="check-all" />
+      <config projectName="LLVM" targetName="check-llvm-mc-sparc" />
+      <config projectName="LLVM" targetName="llvm-cov" />
+      <config projectName="LLVM" targetName="bugpoint" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-memorysanitizer-aarch64" />
+      <config projectName="LLVM" targetName="Kaleidoscope-Ch7" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-memorysanitizer-x86" />
       <config projectName="LLVM" targetName="LLVMX86AsmParser" />
-      <config projectName="LLVM" targetName="install-llvm-dwarfdump" />
+      <config projectName="LLVM" targetName="install-LLVMXCoreCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-orclazy" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-cxxdump-x86" />
       <config projectName="LLVM" targetName="llvm-config" />
       <config projectName="LLVM" targetName="check-llvm-transforms-tailcallelim" />
       <config projectName="LLVM" targetName="LLVMAMDGPUAsmPrinter" />
       <config projectName="LLVM" targetName="install-LLVMAArch64AsmPrinter" />
+      <config projectName="LLVM" targetName="SparcCommonTableGen" />
       <config projectName="LLVM" targetName="LLVMHexagonDesc" />
-      <config projectName="LLVM" targetName="install-LLVMX86Info" />
       <config projectName="LLVM" targetName="check-llvm-transforms-inferfunctionattrs" />
       <config projectName="LLVM" targetName="check-llvm-object-aarch64" />
       <config projectName="LLVM" targetName="LLVMCoverage" />
@@ -167,21 +169,20 @@
       <config projectName="LLVM" targetName="check-llvm-codegen-hexagon-vect" />
       <config projectName="LLVM" targetName="check-llvm-transforms-indvarsimplify-nvptx" />
       <config projectName="LLVM" targetName="check-llvm-tools-lto" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-powerpc" />
       <config projectName="LLVM" targetName="install-LLVMTarget" />
-      <config projectName="LLVM" targetName="check-llvm-mc-amdgpu-regression" />
       <config projectName="LLVM" targetName="LLVMARMAsmParser" />
       <config projectName="LLVM" targetName="install-llvm-mcmarkup" />
       <config projectName="LLVM" targetName="check-llvm-analysis-scalarevolution" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-aarch64" />
       <config projectName="LLVM" targetName="check-llvm-analysis-lint" />
       <config projectName="LLVM" targetName="check-llvm-codegen-x86-gc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopunroll-x86" />
       <config projectName="LLVM" targetName="install-LLVMMipsAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-mips32r6" />
       <config projectName="LLVM" targetName="install-llvm-lib" />
-      <config projectName="LLVM" targetName="install-LLVMAMDGPUInfo" />
       <config projectName="LLVM" targetName="install-llvm-dwp" />
       <config projectName="LLVM" targetName="check-llvm-analysis-globalsmodref" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-sparc" />
       <config projectName="LLVM" targetName="install-LLVMMipsInfo" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-systemz" />
       <config projectName="LLVM" targetName="LLVMSparcAsmParser" />
@@ -192,32 +193,31 @@
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips2" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips1" />
       <config projectName="LLVM" targetName="check-llvm-transforms-globalmerge" />
+      <config projectName="LLVM" targetName="install-obj2yaml" />
       <config projectName="LLVM" targetName="LLVMAMDGPUDisassembler" />
       <config projectName="LLVM" targetName="LLVMMipsDesc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopdistribute" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-loopidiom-x86" />
       <config projectName="LLVM" targetName="LLVMOption" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-powerpc" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-pdbdump" />
       <config projectName="LLVM" targetName="check-llvm-transforms-wholeprogramdevirt" />
       <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg" />
       <config projectName="LLVM" targetName="LLVMXCoreDesc" />
-      <config projectName="LLVM" targetName="LLVMMSP430Info" />
-      <config projectName="LLVM" targetName="check-llvm-tools-sancov" />
+      <config projectName="LLVM" targetName="LLVMNVPTXDesc" />
       <config projectName="LLVM" targetName="LLVMHexagonAsmParser" />
       <config projectName="LLVM" targetName="install-LLVMPowerPCInfo" />
       <config projectName="LLVM" targetName="check-llvm-transforms-separateconstoffsetfromgep-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-codegen-amdgpu" />
+      <config projectName="LLVM" targetName="install-LLVMAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-object-lanai" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64" />
-      <config projectName="LLVM" targetName="check-llvm-yamlparser" />
+      <config projectName="LLVM" targetName="LLVMTarget" />
       <config projectName="LLVM" targetName="LLVMSparcInfo" />
       <config projectName="LLVM" targetName="check-llvm-transforms-memcpyopt" />
-      <config projectName="LLVM" targetName="ADTTests" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopstrengthreduce-x86" />
       <config projectName="LLVM" targetName="LLVMMSP430AsmPrinter" />
       <config projectName="LLVM" targetName="LLVMBitWriter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-sccp" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-lowerexpectintrinsic" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-dsp" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-boundschecking" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-cconv" />
@@ -240,20 +240,23 @@
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips2" />
       <config projectName="LLVM" targetName="LLVMMCParser" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopstrengthreduce-nvptx" />
-      <config projectName="LLVM" targetName="llvm-lib" />
       <config projectName="LLVM" targetName="LLVMARMDisassembler" />
       <config projectName="LLVM" targetName="check-llvm-linker" />
       <config projectName="LLVM" targetName="obj2yaml" />
-      <config projectName="LLVM" targetName="LLVMTarget" />
       <config projectName="LLVM" targetName="CodeGenTests" />
+      <config projectName="LLVM" targetName="LLVMMCJIT" />
       <config projectName="LLVM" targetName="LLVMMIRParser" />
       <config projectName="LLVM" targetName="check-llvm-transforms-functionimport" />
+      <config projectName="LLVM" targetName="check-llvm-codegen-lanai" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopunroll-powerpc" />
+      <config projectName="LLVM" targetName="check-llvm-codegen-hexagon" />
       <config projectName="LLVM" targetName="llvm-c-test" />
       <config projectName="LLVM" targetName="check-llvm-transforms-metarenamer" />
       <config projectName="LLVM" targetName="install-LLVMNVPTXAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-other-x86" />
       <config projectName="LLVM" targetName="install-LLVMXCoreInfo" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r5" />
+      <config projectName="LLVM" targetName="install-llvm-cxxdump" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopreroll" />
       <config projectName="LLVM" targetName="check-llvm-transforms-placesafepoints" />
       <config projectName="LLVM" targetName="check-llvm-mc-powerpc" />
@@ -262,7 +265,7 @@
       <config projectName="LLVM" targetName="check-llvm-transforms-loopunroll-amdgpu" />
       <config projectName="LLVM" targetName="install-LLVMBPFCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-transforms-deadargelim" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer" />
+      <config projectName="LLVM" targetName="LLVMMipsAsmParser" />
       <config projectName="LLVM" targetName="LLVMPowerPCCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-transforms-mem2reg" />
       <config projectName="LLVM" targetName="Kaleidoscope-Ch8" />
@@ -279,18 +282,16 @@
       <config projectName="LLVM" targetName="check-llvm-transforms-instsimplify" />
       <config projectName="LLVM" targetName="check-llvm-mc-arm-windows" />
       <config projectName="LLVM" targetName="LLVMX86CodeGen" />
-      <config projectName="LLVM" targetName="check-llvm-analysis-dependenceanalysis" />
       <config projectName="LLVM" targetName="install-bugpoint" />
-      <config projectName="LLVM" targetName="LLVMMipsAsmParser" />
+      <config projectName="LLVM" targetName="check-llvm-codegen-mir-x86" />
       <config projectName="LLVM" targetName="LLVMTransformUtils" />
       <config projectName="LLVM" targetName="install-LLVMX86Disassembler" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-straightlinestrengthreduce-x86" />
       <config projectName="LLVM" targetName="install-LLVMBPFAsmPrinter" />
       <config projectName="LLVM" targetName="install-LLVMIRReader" />
       <config projectName="LLVM" targetName="check-llvm-transforms-separateconstoffsetfromgep-nvptx" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-mir" />
       <config projectName="LLVM" targetName="check-llvm-transforms-util" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-inline" />
+      <config projectName="LLVM" targetName="LLVMXCoreInfo" />
       <config projectName="LLVM" targetName="install-LLVMCore" />
       <config projectName="LLVM" targetName="install-LLVMSparcDesc" />
       <config projectName="LLVM" targetName="install-LLVMPasses" />
@@ -301,46 +302,46 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-lazycallgraph" />
       <config projectName="LLVM" targetName="check-llvm-bindings-llvm-c-x86" />
       <config projectName="LLVM" targetName="LLVMPowerPCAsmPrinter" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32r6" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopsimplifycfg" />
       <config projectName="LLVM" targetName="check-llvm-transforms-stripdeadprototypes" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-loopsimplify" />
+      <config projectName="LLVM" targetName="install-LLVMSystemZAsmParser" />
+      <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump-x86" />
       <config projectName="LLVM" targetName="install-LLVMMSP430Desc" />
       <config projectName="LLVM" targetName="LLVMCodeGen" />
       <config projectName="LLVM" targetName="LLVMMSP430CodeGen" />
       <config projectName="LLVM" targetName="install-LLVMDebugInfoCodeView" />
+      <config projectName="LLVM" targetName="check-llvm-tools" />
       <config projectName="LLVM" targetName="check-llvm-transforms-adddiscriminators" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-speculativeexecution" />
       <config projectName="LLVM" targetName="install-llvm-as" />
       <config projectName="LLVM" targetName="LLVMSystemZInfo" />
+      <config projectName="LLVM" targetName="llvm-bcanalyzer" />
       <config projectName="LLVM" targetName="check-llvm-transforms-instmerge" />
       <config projectName="LLVM" targetName="llvm-cxxdump" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-orcmcjit-remote" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r3" />
       <config projectName="LLVM" targetName="check-llvm-transforms-pruneeh" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-mips64r6" />
       <config projectName="LLVM" targetName="install-LLVMLibDriver" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-eva" />
+      <config projectName="LLVM" targetName="install-LLVMLTO" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-interpreter" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-mc" />
       <config projectName="LLVM" targetName="check-llvm-codegen-wineh" />
-      <config projectName="LLVM" targetName="LLVMSparcCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-tools-yaml2obj" />
       <config projectName="LLVM" targetName="install-LLVMSparcAsmPrinter" />
       <config projectName="LLVM" targetName="install-llvm-pdbdump" />
       <config projectName="LLVM" targetName="check-llvm-analysis-scopednoaliasaa" />
       <config projectName="LLVM" targetName="check-llvm-transforms-codegenprepare-aarch64" />
       <config projectName="LLVM" targetName="LLVMAArch64AsmParser" />
-      <config projectName="LLVM" targetName="LLVMAArch64Info" />
-      <config projectName="LLVM" targetName="LLVMSymbolize" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-dspr2" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips-dspr3" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips-dspr2" />
-      <config projectName="LLVM" targetName="check-llvm-analysis-costmodel-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-codegenprepare-amdgpu" />
+      <config projectName="LLVM" targetName="check-llvm-analysis-costmodel-x86" />
+      <config projectName="LLVM" targetName="install-llvm-extract" />
       <config projectName="LLVM" targetName="check-llvm-mc-macho" />
       <config projectName="LLVM" targetName="install-LLVMAMDGPUDisassembler" />
-      <config projectName="LLVM" targetName="install-yaml2obj" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-loopidiom-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-sroa" />
       <config projectName="LLVM" targetName="check-llvm-transforms-atomicexpand-x86" />
       <config projectName="LLVM" targetName="check-llvm-codegen-arm-windows" />
@@ -353,22 +354,19 @@
       <config projectName="LLVM" targetName="check-llvm-mc-coff-arm" />
       <config projectName="LLVM" targetName="check-llvm-transforms-preiselintrinsiclowering" />
       <config projectName="LLVM" targetName="LLVMSparcAsmPrinter" />
-      <config projectName="LLVM" targetName="Kaleidoscope-Ch3" />
       <config projectName="LLVM" targetName="check-llvm-transforms-alignmentfromassumptions" />
       <config projectName="LLVM" targetName="check-llvm-object-x86" />
       <config projectName="LLVM" targetName="install-LLVMARMAsmPrinter" />
       <config projectName="LLVM" targetName="X86CommonTableGen" />
       <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-powerpc" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-generic" />
-      <config projectName="LLVM" targetName="LLVMSystemZDesc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-naryreassociate" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips-dsp" />
       <config projectName="LLVM" targetName="install-LLVMARMDisassembler" />
       <config projectName="LLVM" targetName="check-llvm-analysis-profilesummary" />
       <config projectName="LLVM" targetName="LLVMNVPTXAsmPrinter" />
-      <config projectName="LLVM" targetName="llvm-rtdyld" />
       <config projectName="LLVM" targetName="check-llvm-analysis-divergenceanalysis-amdgpu" />
       <config projectName="LLVM" targetName="LLVMLinker" />
-      <config projectName="LLVM" targetName="LLVMMC" />
       <config projectName="LLVM" targetName="LLVMSupport" />
       <config projectName="LLVM" targetName="check-llvm-codegen-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-structurizecfg" />
@@ -378,48 +376,54 @@
       <config projectName="LLVM" targetName="check-llvm-debuginfo-coff" />
       <config projectName="LLVM" targetName="check-llvm-transforms-looploadelim" />
       <config projectName="LLVM" targetName="install-llvm-config" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer" />
       <config projectName="LLVM" targetName="check-llvm-transforms" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r6" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r2" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-systemz" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips-dspr2" />
       <config projectName="LLVM" targetName="PowerPCCommonTableGen" />
-      <config projectName="LLVM" targetName="install-LLVMMCJIT" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-eliminateavailableexternally" />
       <config projectName="LLVM" targetName="test-depends" />
       <config projectName="LLVM" targetName="LLVMipo" />
-      <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-systemz" />
+      <config projectName="LLVM" targetName="check-llvm-tools-gold-x86" />
       <config projectName="LLVM" targetName="llvm-split" />
       <config projectName="LLVM" targetName="install-llvm-symbolizer" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-amdgpu" />
-      <config projectName="LLVM" targetName="check-llvm-examples-kaleidoscope" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-arm" />
+      <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-systemz" />
       <config projectName="LLVM" targetName="LLVMNVPTXInfo" />
       <config projectName="LLVM" targetName="LLVMAArch64CodeGen" />
-      <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump" />
       <config projectName="LLVM" targetName="BrainF" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopvectorize-xcore" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-mips" />
+      <config projectName="LLVM" targetName="SupportTests" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-powerpc" />
       <config projectName="LLVM" targetName="install-LLVMLinker" />
+      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r2" />
+      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r3" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loadcombine" />
+      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r6" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-phaseordering" />
       <config projectName="LLVM" targetName="IPOTests" />
       <config projectName="LLVM" targetName="check-llvm-analysis-delinearization" />
       <config projectName="LLVM" targetName="check-llvm-transforms-earlycse-aarch64" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-rewritestatepointsforgc" />
+      <config projectName="LLVM" targetName="SystemZCommonTableGen" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-globaldce" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-hexagon" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-size-x86" />
       <config projectName="LLVM" targetName="install-llvm-objdump" />
       <config projectName="LLVM" targetName="check-llvm-tools-gold-x86-v1.12" />
-      <config projectName="LLVM" targetName="llvm-symbolizer" />
-      <config projectName="LLVM" targetName="install-llvm-stress" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-arm" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-looprotate" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-mips" />
       <config projectName="LLVM" targetName="install-llvm-split" />
+      <config projectName="LLVM" targetName="install-LLVMCoverage" />
       <config projectName="LLVM" targetName="check-llvm-analysis-costmodel-amdgpu" />
       <config projectName="LLVM" targetName="LLVMAMDGPUAsmParser" />
       <config projectName="LLVM" targetName="install-LLVMX86Desc" />
       <config projectName="LLVM" targetName="LLVMARMInfo" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-x86" />
-      <config projectName="LLVM" targetName="verify-uselistorder" />
       <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting" />
       <config projectName="LLVM" targetName="UnitTests" />
       <config projectName="LLVM" targetName="install-LLVMObjCARCOpts" />
+      <config projectName="LLVM" targetName="LTO" />
       <config projectName="LLVM" targetName="check-llvm-mc" />
       <config projectName="LLVM" targetName="install-LLVMARMInfo" />
       <config projectName="LLVM" targetName="install-LLVMAArch64Disassembler" />
@@ -439,28 +443,29 @@
       <config projectName="LLVM" targetName="AttributeCompatFuncTableGen" />
       <config projectName="LLVM" targetName="LLVMMCDisassembler" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-fast-isel" />
-      <config projectName="LLVM" targetName="check-llvm-thinlto-x86" />
       <config projectName="LLVM" targetName="DebugInfoPDBTests" />
       <config projectName="LLVM" targetName="install-LLVMBitReader" />
       <config projectName="LLVM" targetName="lli" />
       <config projectName="LLVM" targetName="install-LLVMX86CodeGen" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-lowerinvoke" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-lto" />
       <config projectName="LLVM" targetName="llc" />
       <config projectName="LLVM" targetName="check-llvm-mc-arm-alignedbundling" />
       <config projectName="LLVM" targetName="obj.llvm-tblgen" />
-      <config projectName="LLVM" targetName="install-LLVMMSP430AsmPrinter" />
+      <config projectName="LLVM" targetName="install-LLVMInstCombine" />
       <config projectName="LLVM" targetName="LibOptionsTableGen" />
       <config projectName="LLVM" targetName="install-LLVMSparcDisassembler" />
-      <config projectName="LLVM" targetName="LLVMXCoreDisassembler" />
+      <config projectName="LLVM" targetName="LLVMSystemZDisassembler" />
       <config projectName="LLVM" targetName="llvm-dsymutil" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-mips" />
       <config projectName="LLVM" targetName="check-llvm-transforms-straightlinestrengthreduce" />
       <config projectName="LLVM" targetName="LLVMSelectionDAG" />
       <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-powerpc" />
-      <config projectName="LLVM" targetName="install-llvm-extract" />
+      <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-mips" />
       <config projectName="LLVM" targetName="check-llvm-transforms-lowertypetests" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-threadsanitizer" />
       <config projectName="LLVM" targetName="install-LLVMSupport" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopidiom-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips1" />
       <config projectName="LLVM" targetName="check-llvm-transforms-irce" />
@@ -468,12 +473,11 @@
       <config projectName="LLVM" targetName="check-llvm-bindings-llvm-c-arm" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopinterchange" />
       <config projectName="LLVM" targetName="check-llvm-unit" />
-      <config projectName="LLVM" targetName="check-llvm-object-amdgpu" />
       <config projectName="LLVM" targetName="install-LLVMX86Utils" />
       <config projectName="LLVM" targetName="install-LLVMAMDGPUAsmParser" />
       <config projectName="LLVM" targetName="check-llvm-analysis-basicaa" />
       <config projectName="LLVM" targetName="LLVMHexagonDisassembler" />
-      <config projectName="LLVM" targetName="install-LLVMHexagonAsmParser" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-rewritestatepointsforgc" />
       <config projectName="LLVM" targetName="check-llvm-bindings-go" />
       <config projectName="LLVM" targetName="install-LLVMSystemZCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-x86" />
@@ -486,6 +490,7 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-blockfrequencyinfo" />
       <config projectName="LLVM" targetName="check-llvm-transforms-ipconstantprop" />
       <config projectName="LLVM" targetName="LLVMLTO" />
+      <config projectName="LLVM" targetName="install-yaml2obj" />
       <config projectName="LLVM" targetName="llvm-profdata" />
       <config projectName="LLVM" targetName="install-opt" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir-arm" />
@@ -504,32 +509,32 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-dominancefrontier" />
       <config projectName="LLVM" targetName="check-llvm-tools-dsymutil-x86" />
       <config projectName="LLVM" targetName="llvm-link" />
-      <config projectName="LLVM" targetName="check-llvm-codegen-mir-x86" />
-      <config projectName="LLVM" targetName="SystemZCommonTableGen" />
+      <config projectName="LLVM" targetName="LLVMPowerPCInfo" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-sparc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-internalize" />
       <config projectName="LLVM" targetName="check-llvm-transforms-forcedfunctionattrs" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-xcore" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loweratomic" />
       <config projectName="LLVM" targetName="check-llvm-transforms-codeextractor" />
-      <config projectName="LLVM" targetName="install-LTO" />
       <config projectName="LLVM" targetName="check-llvm-object-arm" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-looprotate" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-bbvectorize-xcore" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-earlycse" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-cxxdump" />
       <config projectName="LLVM" targetName="LLVMARMDesc" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-safestack-arm" />
+      <config projectName="LLVM" targetName="check-llvm-examples-kaleidoscope" />
       <config projectName="LLVM" targetName="check-llvm-transforms-mergefunc" />
       <config projectName="LLVM" targetName="check-llvm-analysis-costmodel-powerpc" />
+      <config projectName="LLVM" targetName="install-verify-uselistorder" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-ar" />
       <config projectName="LLVM" targetName="LLVMAMDGPUDesc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopunroll-aarch64" />
       <config projectName="LLVM" targetName="check-llvm-codegen-amdgpu-globalisel" />
       <config projectName="LLVM" targetName="check-llvm-transforms-lowerswitch" />
+      <config projectName="LLVM" targetName="llvm-PerfectShuffle" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-split" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-addresssanitizer-x86" />
       <config projectName="LLVM" targetName="install-LLVMPowerPCAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-mc-aarch64" />
+      <config projectName="LLVM" targetName="LLVMARMAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-msa" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-memorysanitizer" />
       <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-x86" />
@@ -537,14 +542,12 @@
       <config projectName="LLVM" targetName="BuildingAJIT-Ch3" />
       <config projectName="LLVM" targetName="LLVMHexagonInfo" />
       <config projectName="LLVM" targetName="BuildingAJIT-Ch1" />
-      <config projectName="LLVM" targetName="install-LLVMipo" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-amdgpu" />
       <config projectName="LLVM" targetName="LLVMAMDGPUUtils" />
-      <config projectName="LLVM" targetName="check-llvm-analysis-memorydependenceanalysis" />
-      <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-mips" />
+      <config projectName="LLVM" targetName="LLVMAArch64Info" />
       <config projectName="LLVM" targetName="check-llvm-codegen-bpf" />
       <config projectName="LLVM" targetName="BugpointPasses" />
       <config projectName="LLVM" targetName="LLVMScalarOpts" />
-      <config projectName="LLVM" targetName="LLVMObjCARCOpts" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-dwp-x86" />
       <config projectName="LLVM" targetName="ObjectYAMLTests" />
       <config projectName="LLVM" targetName="check-llvm-transforms-objcarc" />
@@ -553,6 +556,7 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-cflaliasanalysis" />
       <config projectName="LLVM" targetName="install-LLVMProfileData" />
       <config projectName="LLVM" targetName="check-llvm-transforms-sampleprofile" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips32r3" />
       <config projectName="LLVM" targetName="check-llvm-objectyaml-macho" />
       <config projectName="LLVM" targetName="install-LLVMCodeGen" />
       <config projectName="LLVM" targetName="gtest_main" />
@@ -561,87 +565,86 @@
       <config projectName="LLVM" targetName="check-llvm-codegen" />
       <config projectName="LLVM" targetName="install-LLVMHexagonCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-readobj" />
-      <config projectName="LLVM" targetName="SupportTests" />
-      <config projectName="LLVM" targetName="Kaleidoscope-Ch7" />
+      <config projectName="LLVM" targetName="Kaleidoscope-Ch3" />
       <config projectName="LLVM" targetName="LLVMLineEditor" />
-      <config projectName="LLVM" targetName="NVPTXCommonTableGen" />
       <config projectName="LLVM" targetName="sanstats" />
       <config projectName="LLVM" targetName="install-LLVMDebugInfoMSF" />
       <config projectName="LLVM" targetName="check-llvm-mc-lanai" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopstrengthreduce-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-orcmcjit" />
-      <config projectName="LLVM" targetName="llvm-bcanalyzer" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-loopdataprefetch-powerpc" />
+      <config projectName="LLVM" targetName="check-all" />
+      <config projectName="LLVM" targetName="check-llvm-mc-macho-powerpc" />
+      <config projectName="LLVM" targetName="LLVMSymbolize" />
       <config projectName="LLVM" targetName="check-llvm-mc-asmparser" />
-      <config projectName="LLVM" targetName="LTO" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-straightlinestrengthreduce-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loadstorevectorizer-amdgpu" />
+      <config projectName="LLVM" targetName="check-llvm-mc-markup" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-symbolizer-pdb" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-coroutines" />
+      <config projectName="LLVM" targetName="check-llvm-analysis-memorydependenceanalysis" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopdataprefetch" />
       <config projectName="LLVM" targetName="check-llvm-transforms-deadstoreelimination" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump-aarch64" />
       <config projectName="LLVM" targetName="LLVMMipsInfo" />
       <config projectName="LLVM" targetName="check-llvm-transforms-gvn" />
       <config projectName="LLVM" targetName="check-llvm-analysis-divergenceanalysis-nvptx" />
+      <config projectName="LLVM" targetName="check-llvm-analysis-divergenceanalysis" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-runtimedyld-arm" />
       <config projectName="LLVM" targetName="check-llvm-objectyaml" />
-      <config projectName="LLVM" targetName="install-obj2yaml" />
-      <config projectName="LLVM" targetName="install-LLVMAsmPrinter" />
+      <config projectName="LLVM" targetName="ADTTests" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r6" />
       <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-sparc" />
-      <config projectName="LLVM" targetName="LLVMXCoreInfo" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r2" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64" />
+      <config projectName="LLVM" targetName="install-LLVMMipsDesc" />
       <config projectName="LLVM" targetName="check" />
       <config projectName="LLVM" targetName="install-LLVMX86AsmPrinter" />
       <config projectName="LLVM" targetName="LTO_exports" />
-      <config projectName="LLVM" targetName="check-llvm-tools" />
+      <config projectName="LLVM" targetName="install-LLVMVectorize" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips64r3" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips64r2" />
       <config projectName="LLVM" targetName="check-llvm-mc-hexagon-instructions" />
       <config projectName="LLVM" targetName="check-llvm-codegen-systemz-large" />
-      <config projectName="LLVM" targetName="install-LLVMInterpreter" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-licm" />
+      <config projectName="LLVM" targetName="check-llvm-bindings" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-efficiencysanitizer" />
       <config projectName="LLVM" targetName="LLVMSystemZAsmParser" />
-      <config projectName="LLVM" targetName="install-LLVMXCoreAsmPrinter" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-branchfolding" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-arm" />
       <config projectName="LLVM" targetName="install-LLVMSparcAsmParser" />
-      <config projectName="LLVM" targetName="llvm-mc" />
+      <config projectName="LLVM" targetName="llvm-tblgen" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-arm" />
-      <config projectName="LLVM" targetName="LLVMARMAsmPrinter" />
-      <config projectName="LLVM" targetName="SparcCommonTableGen" />
+      <config projectName="LLVM" targetName="LLVMBPFAsmPrinter" />
+      <config projectName="LLVM" targetName="install-LLVMHexagonAsmParser" />
       <config projectName="LLVM" targetName="OptsTestTableGen" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-nm-x86" />
-      <config projectName="LLVM" targetName="LLVMPowerPCInfo" />
       <config projectName="LLVM" targetName="MCTests" />
       <config projectName="LLVM" targetName="check-llvm-transforms-constprop" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-globaldce" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-aarch64" />
       <config projectName="LLVM" targetName="check-llvm-transforms-indvarsimplify" />
       <config projectName="LLVM" targetName="check-llvm-transforms-bdce" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-loadstorevectorizer-x86" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-readobj-arm" />
       <config projectName="LLVM" targetName="check-llvm-transforms-lcssa" />
-      <config projectName="LLVM" targetName="install-LLVMPowerPCDesc" />
+      <config projectName="LLVM" targetName="NVPTXCommonTableGen" />
       <config projectName="LLVM" targetName="check-llvm-codegen-thumb2" />
       <config projectName="LLVM" targetName="install-LLVMRuntimeDyld" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips64r5" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips64r6" />
       <config projectName="LLVM" targetName="check-llvm-tools-dsymutil-arm" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-sparc" />
+      <config projectName="LLVM" targetName="install-LLVMMSP430AsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-util-memoryssa" />
-      <config projectName="LLVM" targetName="install-LLVMXCoreCodeGen" />
+      <config projectName="LLVM" targetName="check-llvm-analysis-cflaliasanalysis-andersen" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopversioninglicm" />
       <config projectName="LLVM" targetName="LLVMSparcDesc" />
-      <config projectName="LLVM" targetName="check-llvm-codegen-mir-generic" />
       <config projectName="LLVM" targetName="check-llvm-codegen-nvptx" />
       <config projectName="LLVM" targetName="opt" />
       <config projectName="LLVM" targetName="llvm-nm" />
+      <config projectName="LLVM" targetName="install-llvm-size" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopvectorize-powerpc" />
       <config projectName="LLVM" targetName="install-llvm-link" />
       <config projectName="LLVM" targetName="OptionTests" />
       <config projectName="LLVM" targetName="check-llvm-transforms-sink" />
-      <config projectName="LLVM" targetName="install-verify-uselistorder" />
-      <config projectName="LLVM" targetName="check-llvm-instrumentation" />
-      <config projectName="LLVM" targetName="install-LLVMGlobalISel" />
-      <config projectName="LLVM" targetName="install-LLVMCoverage" />
+      <config projectName="LLVM" targetName="install-LLVMAMDGPUInfo" />
+      <config projectName="LLVM" targetName="install-llvm-dsymutil" />
+      <config projectName="LLVM" targetName="llvm-lib" />
+      <config projectName="LLVM" targetName="check-llvm-mc-amdgpu-regression" />
       <config projectName="LLVM" targetName="llvm-as" />
       <config projectName="LLVM" targetName="install-LLVMSparcCodeGen" />
       <config projectName="LLVM" targetName="AArch64CommonTableGen" />
@@ -649,32 +652,32 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-loopinfo" />
       <config projectName="LLVM" targetName="install-LLVMMCParser" />
       <config projectName="LLVM" targetName="check-llvm-analysis-demandedbits" />
+      <config projectName="LLVM" targetName="install-LLVMMIRParser" />
       <config projectName="LLVM" targetName="check-llvm-transforms-indvarsimplify-amdgpu" />
-      <config projectName="LLVM" targetName="installhdrs" />
-      <config projectName="LLVM" targetName="install-llvm-ar" />
+      <config projectName="LLVM" targetName="install-LLVMHexagonDesc" />
       <config projectName="LLVM" targetName="check-llvm-feature-operandbundles" />
       <config projectName="LLVM" targetName="llvm-test-depends" />
       <config projectName="LLVM" targetName="check-llvm" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32" />
+      <config projectName="LLVM" targetName="LLVMLibDriver" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-lit" />
       <config projectName="LLVM" targetName="check-llvm-tools-gold" />
       <config projectName="LLVM" targetName="check-llvm-bindings-ocaml" />
       <config projectName="LLVM" targetName="LLVMDebugInfoMSF" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-aarch64" />
+      <config projectName="LLVM" targetName="check-llvm-yamlparser" />
       <config projectName="LLVM" targetName="install-LLVMARMCodeGen" />
-      <config projectName="LLVM" targetName="install-LLVMLTO" />
-      <config projectName="LLVM" targetName="install-LLVMInstCombine" />
+      <config projectName="LLVM" targetName="llvm-mc" />
+      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32r6" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32r5" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32r3" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips32r2" />
       <config projectName="LLVM" targetName="check-llvm-bitcode" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-lowerexpectintrinsic" />
-      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r6" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-speculativeexecution" />
+      <config projectName="LLVM" targetName="verify-uselistorder" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r5" />
-      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r3" />
-      <config projectName="LLVM" targetName="check-llvm-mc-mips-mips32r2" />
+      <config projectName="LLVM" targetName="install-LLVMXCoreAsmPrinter" />
+      <config projectName="LLVM" targetName="LLVMMC" />
       <config projectName="LLVM" targetName="install-LLVMAArch64Utils" />
-      <config projectName="LLVM" targetName="check-llvm-tools-sanstats" />
+      <config projectName="LLVM" targetName="LLVMMSP430Info" />
       <config projectName="LLVM" targetName="check-llvm-executionengine-mcjit-remote" />
       <config projectName="LLVM" targetName="check-llvm-analysis-loopaccessanalysis" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-llvm-ir" />
@@ -689,36 +692,34 @@
       <config projectName="LLVM" targetName="check-llvm-analysis-costmodel" />
       <config projectName="LLVM" targetName="Obfuscation" />
       <config projectName="LLVM" targetName="BPFCommonTableGen" />
-      <config projectName="LLVM" targetName="check-llvm-mc-markup" />
+      <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump" />
       <config projectName="LLVM" targetName="check-llvm-transforms-scalarizer" />
       <config projectName="LLVM" targetName="MCJITTests" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mir-hexagon" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-phaseordering" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-branchfolding" />
       <config projectName="LLVM" targetName="check-llvm-mc-arm" />
       <config projectName="LLVM" targetName="LLVMObjectYAML" />
       <config projectName="LLVM" targetName="install-LLVMSparcInfo" />
       <config projectName="LLVM" targetName="check-llvm-bugpoint" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-lanai" />
-      <config projectName="LLVM" targetName="check-llvm-mc-macho-powerpc" />
+      <config projectName="LLVM" targetName="install-llvm-dwarfdump" />
       <config projectName="LLVM" targetName="check-llvm-transforms-bbvectorize-x86" />
       <config projectName="LLVM" targetName="install-llvm-bcanalyzer" />
       <config projectName="LLVM" targetName="install-LLVMAMDGPUAsmPrinter" />
       <config projectName="LLVM" targetName="install-llvm-dis" />
       <config projectName="LLVM" targetName="install-LLVMBitWriter" />
       <config projectName="LLVM" targetName="install-LLVMPowerPCCodeGen" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-lowerinvoke" />
+      <config projectName="LLVM" targetName="llvm-symbolizer" />
       <config projectName="LLVM" targetName="install-LLVMBPFDesc" />
-      <config projectName="LLVM" targetName="install-LLVMAArch64Desc" />
       <config projectName="LLVM" targetName="install-LLVMSystemZDesc" />
       <config projectName="LLVM" targetName="install-LLVMExecutionEngine" />
       <config projectName="LLVM" targetName="check-llvm-symbolrewriter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-instcombine" />
-      <config projectName="LLVM" targetName="yaml2obj" />
       <config projectName="LLVM" targetName="check-llvm-mc-amdgpu" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-aarch64" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips-dsp" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-safestack-arm" />
       <config projectName="LLVM" targetName="AnalysisTests" />
-      <config projectName="LLVM" targetName="check-llvm-examples" />
+      <config projectName="LLVM" targetName="install-LLVMAMDGPUDesc" />
       <config projectName="LLVM" targetName="check-llvm-verifier" />
       <config projectName="LLVM" targetName="install-LLVMTransformUtils" />
       <config projectName="LLVM" targetName="LLVMAsmParser" />
@@ -726,56 +727,55 @@
       <config projectName="LLVM" targetName="LLVMXCoreCodeGen" />
       <config projectName="LLVM" targetName="BuildingAJIT-Ch5-Server" />
       <config projectName="LLVM" targetName="llvm-dwarfdump" />
-      <config projectName="LLVM" targetName="install-llvm-cxxdump" />
+      <config projectName="LLVM" targetName="installhdrs" />
       <config projectName="LLVM" targetName="LinkerTests" />
-      <config projectName="LLVM" targetName="check-llvm-libdriver" />
-      <config projectName="LLVM" targetName="BitcodeTests" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-constanthoisting-powerpc" />
+      <config projectName="LLVM" targetName="check-llvm-analysis-dependenceanalysis" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-adce" />
       <config projectName="LLVM" targetName="LLVMAArch64AsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-lowerguardintrinsic" />
-      <config projectName="LLVM" targetName="install-LLVMSystemZAsmParser" />
-      <config projectName="LLVM" targetName="check-llvm-lto-arm" />
+      <config projectName="LLVM" targetName="install-LLVMAArch64Desc" />
       <config projectName="LLVM" targetName="LLVMMipsAsmPrinter" />
       <config projectName="LLVM" targetName="install-LLVMScalarOpts" />
-      <config projectName="LLVM" targetName="install-LLVMMIRParser" />
+      <config projectName="LLVM" targetName="LLVMSystemZDesc" />
       <config projectName="LLVM" targetName="LLVMExecutionEngine" />
       <config projectName="LLVM" targetName="install-llvm-c-test" />
-      <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump-x86" />
+      <config projectName="LLVM" targetName="check-llvm-thinlto-x86" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopdeletion" />
-      <config projectName="LLVM" targetName="check-llvm-codegen-lanai" />
+      <config projectName="LLVM" targetName="LLVMSparcCodeGen" />
       <config projectName="LLVM" targetName="install-LLVMAMDGPUCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-transforms-bbvectorize" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-eliminateavailableexternally" />
+      <config projectName="LLVM" targetName="LLVMObjCARCOpts" />
       <config projectName="LLVM" targetName="check-llvm-transforms-loopstrengthreduce" />
       <config projectName="LLVM" targetName="install-LLVMHexagonInfo" />
       <config projectName="LLVM" targetName="LLVMIRReader" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips32r6" />
-      <config projectName="LLVM" targetName="check-llvm-mc-sparc" />
+      <config projectName="LLVM" targetName="check-llvm-libdriver" />
       <config projectName="LLVM" targetName="check-llvm-codegen-aarch64-globalisel" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-micromips32r3" />
+      <config projectName="LLVM" targetName="install-llvm-ar" />
       <config projectName="LLVM" targetName="check-llvm-transforms-functionattrs" />
       <config projectName="LLVM" targetName="install-lli" />
       <config projectName="LLVM" targetName="yaml-bench" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips-cstmaterialization" />
       <config projectName="LLVM" targetName="MITests" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-simplifycfg-amdgpu" />
-      <config projectName="LLVM" targetName="llvm-tblgen" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-bbvectorize-xcore" />
+      <config projectName="LLVM" targetName="check-llvm-tools-sancov" />
       <config projectName="LLVM" targetName="install-LLVMLineEditor" />
-      <config projectName="LLVM" targetName="LLVMMCJIT" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-arm" />
-      <config projectName="LLVM" targetName="check-llvm-mc-elf" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-loadstorevectorizer-nvptx" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-licm" />
+      <config projectName="LLVM" targetName="check-llvm-tools-sanstats" />
       <config projectName="LLVM" targetName="llvm-extract" />
-      <config projectName="LLVM" targetName="check-llvm-analysis-divergenceanalysis" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-loopsimplify" />
       <config projectName="LLVM" targetName="check-llvm-jitlistener" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-lanai" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-dsp" />
       <config projectName="LLVM" targetName="check-llvm-analysis-callgraph" />
       <config projectName="LLVM" targetName="check-llvm-transforms-separateconstoffsetfromgep" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r3" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-inline" />
       <config projectName="LLVM" targetName="check-llvm-object" />
       <config projectName="LLVM" targetName="LLVMAArch64Utils" />
-      <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-mips64r5" />
+      <config projectName="LLVM" targetName="check-llvm-codegen-mir-generic" />
       <config projectName="LLVM" targetName="check-llvm-codegen-systemz" />
       <config projectName="LLVM" targetName="install-LLVMDebugInfoPDB" />
       <config projectName="LLVM" targetName="check-llvm-mc-disassembler-mips-msa" />
@@ -784,13 +784,13 @@
       <config projectName="LLVM" targetName="install-LLVMMSP430Info" />
       <config projectName="LLVM" targetName="check-llvm-executionengine" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-memorysanitizer-powerpc" />
-      <config projectName="LLVM" targetName="check-llvm-codegen-mir-lanai" />
+      <config projectName="LLVM" targetName="install-LLVMMCJIT" />
       <config projectName="LLVM" targetName="install-llvm-rtdyld" />
       <config projectName="LLVM" targetName="check-llvm-codegen-powerpc" />
       <config projectName="LLVM" targetName="LLVMHexagonCodeGen" />
       <config projectName="LLVM" targetName="check-llvm-codegen-hexagon-intrinsics" />
       <config projectName="LLVM" targetName="install-LLVMAArch64CodeGen" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-partiallyinlinelibcalls" />
+      <config projectName="LLVM" targetName="check-llvm-lto-arm" />
       <config projectName="LLVM" targetName="check-llvm-codegen-xcore" />
       <config projectName="LLVM" targetName="ARMCommonTableGen" />
       <config projectName="LLVM" targetName="HowToUseJIT" />
@@ -801,7 +801,7 @@
       <config projectName="LLVM" targetName="install-LLVMObjectYAML" />
       <config projectName="LLVM" targetName="check-llvm-analysis-postdominators" />
       <config projectName="LLVM" targetName="llvm-diff" />
-      <config projectName="LLVM" targetName="check-llvm-codegen-hexagon" />
+      <config projectName="LLVM" targetName="check-llvm-instrumentation" />
       <config projectName="LLVM" targetName="check-llvm-tools-llvm-objdump-arm" />
       <config projectName="LLVM" targetName="install-llvm-lto" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-micromips" />
@@ -813,7 +813,7 @@
       <config projectName="LLVM" targetName="check-llvm-transforms-argumentpromotion" />
       <config projectName="LLVM" targetName="check-llvm-instrumentation-memorysanitizer-mips" />
       <config projectName="LLVM" targetName="check-llvm-mc-x86" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-loadstorevectorizer-x86" />
+      <config projectName="LLVM" targetName="check-llvm-transforms-partiallyinlinelibcalls" />
       <config projectName="LLVM" targetName="BuildingAJIT-Ch2" />
       <config projectName="LLVM" targetName="LLVMX86Desc" />
       <config projectName="LLVM" targetName="LLVMBitReader" />
@@ -832,24 +832,24 @@
       <config projectName="LLVM" targetName="LLVMCore" />
       <config projectName="LLVM" targetName="check-llvm-thinlto" />
       <config projectName="LLVM" targetName="check-llvm-transforms-straightlinestrengthreduce-nvptx" />
-      <config projectName="LLVM" targetName="HexagonCommonTableGen" />
-      <config projectName="LLVM" targetName="check-llvm-tools-gold-powerpc" />
+      <config projectName="LLVM" targetName="install-LLVMSystemZDisassembler" />
+      <config projectName="LLVM" targetName="check-llvm-mc-mips-msa" />
       <config projectName="LLVM" targetName="check-llvm-mc-mips-mips64" />
       <config projectName="LLVM" targetName="check-llvm-codegen-mips" />
-      <config projectName="LLVM" targetName="llvm-PerfectShuffle" />
+      <config projectName="LLVM" targetName="yaml2obj" />
       <config projectName="LLVM" targetName="check-llvm-transforms-atomicexpand-sparc" />
       <config projectName="LLVM" targetName="check-llvm-transforms-safestack-x86" />
-      <config projectName="LLVM" targetName="install-llvm-size" />
-      <config projectName="LLVM" targetName="LLVMNVPTXDesc" />
-      <config projectName="LLVM" targetName="llvm-cov" />
+      <config projectName="LLVM" targetName="install-LTO" />
+      <config projectName="LLVM" targetName="HexagonCommonTableGen" />
+      <config projectName="LLVM" targetName="llvm-rtdyld" />
       <config projectName="LLVM" targetName="install-llvm-ranlib" />
       <config projectName="LLVM" targetName="check-llvm-debuginfo-mir-x86" />
       <config projectName="LLVM" targetName="check-llvm-analysis-costmodel-aarch64" />
-      <config projectName="LLVM" targetName="check-llvm-transforms-pgoprofile" />
+      <config projectName="LLVM" targetName="LLVMXCoreDisassembler" />
       <config projectName="LLVM" targetName="install-LLVMSystemZInfo" />
       <config projectName="LLVM" targetName="LLVMXCoreAsmPrinter" />
       <config projectName="LLVM" targetName="check-llvm-transforms-slpvectorizer-aarch64" />
-      <config projectName="LLVM" targetName="bugpoint" />
+      <config projectName="LLVM" targetName="install-LLVMX86Info" />
       <config projectName="LLVM" targetName="llvm-ranlib" />
     </generated>
   </component>
@@ -859,12 +859,15 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="65bf46cb-e50b-4b01-a8e3-9f4f0201b6fe" name="Default" comment="Add obfuscation using marker">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ndi-test/Bench2d.cpp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ndi-test/HelloWorld.cpp" />
+    <list default="true" id="65bf46cb-e50b-4b01-a8e3-9f4f0201b6fe" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld_main.bc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld_main.ll" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/llvm/ndi-interpreter-patch.h" afterPath="$PROJECT_DIR$/include/llvm/ndi-interpreter-patch.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/llvm/ndi.h" afterPath="$PROJECT_DIR$/include/llvm/ndi.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/CodeGen/TargetLoweringBase.cpp" afterPath="$PROJECT_DIR$/lib/CodeGen/TargetLoweringBase.cpp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp" afterPath="$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld_main.ll" afterPath="$PROJECT_DIR$/ndi-test/HelloWorld_main.ll" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld.cpp" afterPath="$PROJECT_DIR$/ndi-test/HelloWorld.cpp" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -883,8 +886,8 @@
       <file leaf-file-name="Obfuscation.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="56">
-              <caret line="279" column="40" lean-forward="false" selection-start-line="279" selection-start-column="40" selection-end-line="279" selection-end-column="40" />
+            <state relative-caret-position="98">
+              <caret line="134" column="40" lean-forward="false" selection-start-line="134" selection-start-column="40" selection-end-line="134" selection-end-column="40" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -937,8 +940,9 @@
         <option value="$PROJECT_DIR$/lib/ExecutionEngine/Interpreter/Execution.cpp" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/include/llvm/ndi-interpreter-patch.h" />
-        <option value="$PROJECT_DIR$/include/llvm/ndi.h" />
         <option value="$PROJECT_DIR$/ndi-interpreter-patch.h" />
+        <option value="$PROJECT_DIR$/lib/CodeGen/TargetLoweringBase.cpp" />
+        <option value="$PROJECT_DIR$/include/llvm/ndi.h" />
         <option value="$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp" />
       </list>
     </option>
@@ -1010,7 +1014,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Bitcode" />
+              <option name="myItemId" value="CodeGen" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1024,15 +1028,25 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
+              <option name="myItemId" value="include" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LLVM" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="llvm" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Bitcode" />
+              <option name="myItemId" value="include" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Reader" />
+              <option name="myItemId" value="llvm" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1045,7 +1059,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.eslint.eslintPackage" value="" />
   </component>
-  <component name="RunManager" selected="Application.Obfuscation-ll-marker">
+  <component name="RunManager" selected="Application.lli-ll">
     <configuration default="true" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="check-all" CONFIG_NAME="Debug" TEST_MODE="SUITE_TEST">
       <envs />
       <method />
@@ -2293,15 +2307,15 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Obfuscation-ll-marker" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld_main.ll -o ./ndi-test/obf.ll   --strategy=MARKER" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
+    <configuration default="false" name="Obfuscation-ll-marker" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld.ll -o ./ndi-test/obf.ll   --strategy=MARKER" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Obfuscation-ll-analysis" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld_main.ll -o ./ndi-test/obf.ll -analysis" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
+    <configuration default="false" name="Obfuscation-ll-analysis" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld.ll --ndiAnalysis -o /dev/null" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="Obfuscation-ll-pc" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld_main.ll -o ./ndi-test/obf.ll --strategy=PC -ndi-ratio=0.5" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
+    <configuration default="false" name="Obfuscation-ll-pc" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-load ./cmake-build-debug/lib/Obfuscation.so -S -obfuscation ./ndi-test/HelloWorld.ll -o ./ndi-test/obf.ll --strategy=PC --ndi-ratio=0.5" WORKING_DIR="file://$PROJECT_DIR$/" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="Obfuscation" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="opt">
       <envs />
       <method />
     </configuration>
@@ -5522,12 +5536,21 @@
       <workItem from="1484613110429" duration="1078000" />
       <workItem from="1484629437724" duration="1000" />
       <workItem from="1484629598602" duration="6177000" />
-      <workItem from="1484638629763" duration="2744000" />
+      <workItem from="1484638629763" duration="2906000" />
+      <workItem from="1484715043325" duration="4642000" />
     </task>
+    <task id="LOCAL-00001" summary="Update marker function name&#10;Add nothrow attribute to marker() function">
+      <created>1484641507671</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1484641507671</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="61009000" />
+    <option name="totallyTimeSpent" value="65813000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -5540,15 +5563,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="26" width="1920" height="1010" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19240907" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3290461" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7395716" sideWeight="0.49815497" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39797068" sideWeight="0.50395364" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41826382" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.6335964" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -5570,7 +5593,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add obfuscation using marker" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add obfuscation using marker" />
+    <MESSAGE value="Update marker function name&#10;Add nothrow attribute to marker() function" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update marker function name&#10;Add nothrow attribute to marker() function" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -5600,6 +5624,16 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -5782,13 +5816,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/include/llvm/ndi.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="272" column="19" lean-forward="false" selection-start-line="272" selection-start-column="19" selection-end-line="272" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/include/c++/5/bits/basic_string.tcc">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -5964,10 +5991,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/include/llvm/ndi.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="357" column="0" lean-forward="false" selection-start-line="357" selection-start-column="0" selection-end-line="357" selection-end-column="0" />
+          <folding>
+            <element signature="e#281#370#0" expanded="false" />
+            <element signature="e#8072#10619#0" expanded="false" />
+            <element signature="e#10871#10890#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/CodeGen/TargetLoweringBase.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1198">
+          <caret line="1655" column="34" lean-forward="false" selection-start-line="1655" selection-start-column="34" selection-end-line="1655" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="279" column="40" lean-forward="false" selection-start-line="279" selection-start-column="40" selection-end-line="279" selection-end-column="40" />
+        <state relative-caret-position="98">
+          <caret line="134" column="40" lean-forward="false" selection-start-line="134" selection-start-column="40" selection-end-line="134" selection-end-column="40" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>

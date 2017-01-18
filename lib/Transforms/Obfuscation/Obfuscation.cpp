@@ -27,7 +27,7 @@ enum NDIStrategies {
   NONE, PC, MARKER
 };
 
-cl::opt<bool> AnalysisOnly("analysis", cl::desc("Analysis code only"));
+cl::opt<bool> AnalysisOnly("ndiAnalysis", cl::desc("Analysis code only"));
 cl::opt<float> NdiPCRatio("ndi-ratio",
                           cl::desc("Ratio for NDI using program counter"),
                           cl::init(1));
@@ -139,26 +139,56 @@ namespace ndi {
               << std::setw(10) << std::left << "Types "
               << "Count\n"
               << "--------------------------------------------------------\n";
-    for (auto &s : signatureMap) {
-      if (
-//          (signatureMap[s.first].size() == 1) ||
-          (s.first == "Others")) {
-        continue;
-      }
 
+    // create sorted signature
+    std::vector<std::pair<std::string, int>> sortedSignatures;
+    for (auto &s: signatureMap) {
+      if ((s.first == "Others") || (signatureMap[s.first].size() == 1)) continue;
       int countSum = 0;
       for (auto &i : s.second) {
-        std::cout << std::setw(40) << std::left << ((countSum == 0) ? s.first
+        countSum += i.second.size();
+      }
+      sortedSignatures.push_back(std::pair<std::string, int>(s.first, countSum));
+    }
+    struct {
+      bool operator()(std::pair<std::string, int> a, std::pair<std::string, int> b) {
+        return a.second > b.second;
+      }
+    } greater;
+    std::sort(sortedSignatures.begin(), sortedSignatures.end(), greater);
+
+    for (auto &s : sortedSignatures) {
+      for (auto &i : signatureMap[s.first]) {
+        std::cout << std::setw(40) << std::left << ((i == *(signatureMap[s.first].begin())) ? s.first
                                                                     : "");
         std::cout << std::setw(10) << std::left << i.first << i.second.size()
                   << "\n";
-        countSum += i.second.size();
       }
       std::cout << std::setw(40) << std::left << "Total"
                 << std::setw(10) << std::left << ""
-                << countSum << "\n"
+                << s.second << "\n"
                 << "--------------------------------------------------------\n";
     }
+//    for (auto &s : signatureMap) {
+//      if (
+////          (signatureMap[s.first].size() == 1) ||
+//          (s.first == "Others")) {
+//        continue;
+//      }
+//
+//      int countSum = 0;
+//      for (auto &i : s.second) {
+//        std::cout << std::setw(40) << std::left << ((countSum == 0) ? s.first
+//                                                                    : "");
+//        std::cout << std::setw(10) << std::left << i.first << i.second.size()
+//                  << "\n";
+//        countSum += i.second.size();
+//      }
+//      std::cout << std::setw(40) << std::left << "Total"
+//                << std::setw(10) << std::left << ""
+//                << countSum << "\n"
+//                << "--------------------------------------------------------\n";
+//    }
     std::cout << "\n";
   }
 
