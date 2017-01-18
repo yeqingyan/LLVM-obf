@@ -23,6 +23,7 @@
 // Marker test
 void marker(int x, int from, int to) __attribute__((nothrow));
 void marker(int x, int from, int to) {
+  assert(( x >= from ) && ( x <= to ));
   return;
 }
 
