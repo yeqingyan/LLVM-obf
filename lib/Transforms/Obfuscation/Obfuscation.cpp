@@ -24,7 +24,7 @@ typedef std::pair<InstType, std::vector<Instruction *>> InstMapEntry;
 typedef std::map<InstSignature, InstMap> SignatureTypes;
 typedef std::pair<InstSignature, InstMap> SignatureTypesEntry;
 enum NDIStrategies {
-  NONE, PC, MARKER
+  NONE, PC, MARKER, HYBRID
 };
 
 cl::opt<bool> AnalysisOnly("ndiAnalysis", cl::desc("Analysis code only"));
@@ -37,7 +37,8 @@ cl::opt<NDIStrategies> NDIStrategy(
     cl::values(
         clEnumVal(NONE, "Disable obfuscation"),
         clEnumVal(PC, "Using program coutner"),
-        clEnumVal(MARKER, "Using marker function"), NULL));
+        clEnumVal(MARKER, "Using marker function"),
+        clEnumVal(HYBRID, "Using marker function first, then using pc"), NULL));
 
 namespace ndi {
   int NDI_TYPE1 = 1;
@@ -53,6 +54,9 @@ namespace ndi {
     static char ID;
     // HashMap of instructions which have the same signatures.
     static SignatureTypes signatureMap;
+    // Used by hybrid strategy, if instruction already obfuscated by marker,
+    // skip this instruction in pc.
+    static std::set<Instruction *> ndiObfuscatedInstructions;
     // Used to record the obfuscated instruction pc
     static std::set<int> ndiUsedProgramCounters;
     // Used by marker
@@ -75,35 +79,52 @@ namespace ndi {
                     "    index += 1;\n"
                     "    blockIterator++;\n"
                     "  }\n"
-                    "  switch (index) {\n");
+                    "  if (false) {}\n");
       } else if (NDIStrategy == MARKER) {
-        fprintf(patchFile, "ExecutionContext &SF = ECStack.back();\n"
-            "GenericValue markerVariable;\n"
-            "if (I.NdiType == 3) {\n"
-            "  markerVariable = getOperandValue(I.getOperand(1), SF);\n"
-            "} else if (I.NdiType == 4) {\n"
-            "  markerVariable = getOperandValue(I.getOperand(2), SF);\n"
-            "} else {\n"
-            "   llvm_unreachable(\"Unknown ndi type\"); \n"
-            "}\n"
-            "int marker = markerVariable.IntVal.getSExtValue();\n"
-            "if (false) {}");
+        fprintf(patchFile,
+                "ExecutionContext &SF = ECStack.back();\n"
+                    "GenericValue markerVariable;\n"
+                    "if (I.NdiType == 3) {\n"
+                    "  markerVariable = getOperandValue(I.getOperand(1), SF);\n"
+                    "} else if (I.NdiType == 4) {\n"
+                    "  markerVariable = getOperandValue(I.getOperand(2), SF);\n"
+                    "} else {\n"
+                    "   llvm_unreachable(\"Unknown ndi type\"); \n"
+                    "}\n"
+                    "int marker = markerVariable.IntVal.getSExtValue();\n"
+                    "if (false) {}");
+      } else if (NDIStrategy == HYBRID) {
+        fprintf(patchFile,
+                "ExecutionContext &SF = ECStack.back();\n"
+                    "GenericValue markerVariable;\n"
+                    "int marker = -1;"
+                    "int index  = -1;"
+                    "if ((I.NdiType == 1) || (I.NdiType == 2)) {\n"
+                    "  index = 0;\n"
+                    "  BasicBlock::iterator blockIterator = I.getParent()->begin();\n"
+                    "  while ((blockIterator != I.getParent()->end()) &&\n"
+                    "         ((&*blockIterator) != &I)) {\n"
+                    "    index += 1;\n"
+                    "    blockIterator++;\n"
+                    "  }\n"
+                    "} else if (I.NdiType == 3) {\n"
+                    "  markerVariable = getOperandValue(I.getOperand(1), SF);\n"
+                    "  marker = markerVariable.IntVal.getSExtValue();\n"
+                    "} else if (I.NdiType == 4) {\n"
+                    "  markerVariable = getOperandValue(I.getOperand(2), SF);\n"
+                    "  marker = markerVariable.IntVal.getSExtValue();\n"
+                    "} else {\n"
+                    "   llvm_unreachable(\"Unknown ndi type\"); \n"
+                    "}\n"
+                    "if (false) {}");
       }
     }
 
     ~Obfuscation() {
-      if (NDIStrategy == PC) {
-        fprintf(patchFile,
-                "    default:\n"
-                    "      llvm_unreachable(\"Unhandled ndi instruction\");\n"
-                    "      break;\n"
-                    "  }");
-      } else if (NDIStrategy == MARKER) {
-        fprintf(patchFile,
-                "else {\n"
-                    "llvm_unreachable(\"Unhandled ndi instruction\");\n"
-                    "}");
-      }
+      fprintf(patchFile,
+              "else {\n"
+                  "llvm_unreachable(\"Unhandled ndi instruction\");\n"
+                  "}");
       std::cout << "Close patch file.";
       fclose(patchFile);
     }
@@ -120,10 +141,12 @@ namespace ndi {
     bool useMarkerToNdi(Instruction *i);
 
 
-    bool replaceInstructionWithNdi(Instruction &I);
+    bool replaceInstructionWithNdi(Instruction &I, NDIStrategies strategy);
 
     void
-    generateInterpreterPatchNdi(std::FILE *patchFile, Instruction &obfInst);
+    generateInterpreterPatchNdi(std::FILE *patchFile,
+                                Instruction &obfInst,
+                                NDIStrategies strategy);
 
     // Main function
     bool runOnModule(Module &M) override;
@@ -143,15 +166,18 @@ namespace ndi {
     // create sorted signature
     std::vector<std::pair<std::string, int>> sortedSignatures;
     for (auto &s: signatureMap) {
-      if ((s.first == "Others") || (signatureMap[s.first].size() == 1)) continue;
+      if ((s.first == "Others") || (signatureMap[s.first].size() == 1))
+        continue;
       int countSum = 0;
       for (auto &i : s.second) {
         countSum += i.second.size();
       }
-      sortedSignatures.push_back(std::pair<std::string, int>(s.first, countSum));
+      sortedSignatures.push_back(
+          std::pair<std::string, int>(s.first, countSum));
     }
     struct {
-      bool operator()(std::pair<std::string, int> a, std::pair<std::string, int> b) {
+      bool
+      operator()(std::pair<std::string, int> a, std::pair<std::string, int> b) {
         return a.second > b.second;
       }
     } greater;
@@ -159,8 +185,9 @@ namespace ndi {
 
     for (auto &s : sortedSignatures) {
       for (auto &i : signatureMap[s.first]) {
-        std::cout << std::setw(40) << std::left << ((i == *(signatureMap[s.first].begin())) ? s.first
-                                                                    : "");
+        std::cout << std::setw(40) << std::left
+                  << ((i == *(signatureMap[s.first].begin())) ? s.first
+                                                              : "");
         std::cout << std::setw(10) << std::left << i.first << i.second.size()
                   << "\n";
       }
@@ -169,26 +196,6 @@ namespace ndi {
                 << s.second << "\n"
                 << "--------------------------------------------------------\n";
     }
-//    for (auto &s : signatureMap) {
-//      if (
-////          (signatureMap[s.first].size() == 1) ||
-//          (s.first == "Others")) {
-//        continue;
-//      }
-//
-//      int countSum = 0;
-//      for (auto &i : s.second) {
-//        std::cout << std::setw(40) << std::left << ((countSum == 0) ? s.first
-//                                                                    : "");
-//        std::cout << std::setw(10) << std::left << i.first << i.second.size()
-//                  << "\n";
-//        countSum += i.second.size();
-//      }
-//      std::cout << std::setw(40) << std::left << "Total"
-//                << std::setw(10) << std::left << ""
-//                << countSum << "\n"
-//                << "--------------------------------------------------------\n";
-//    }
     std::cout << "\n";
   }
 
@@ -197,7 +204,7 @@ namespace ndi {
    */
   bool Obfuscation::runOnModule(Module &M) {
     // analyze option begin
-
+    bool codeModified = false;
     // First run, get potential NDIs.
     for (Function &F: M.functions()) {
       for (BasicBlock &BB: F) {
@@ -226,20 +233,20 @@ namespace ndi {
       return false;
     }
 
-    if (NDIStrategy == PC) {
-      if ((NdiPCRatio > 1) || (NdiPCRatio < 0)) {
+    // For hybrid strategy, do marker first.
+    if ((NDIStrategy == MARKER) || (NDIStrategy == HYBRID)) {
+      codeModified = ndiUsingMarker(M) || codeModified;
+    }
+
+    if ((NDIStrategy == PC) || (NDIStrategy == HYBRID)) {
+      if ((NdiPCRatio > 1) || (NdiPCRatio <= 0)) {
         std::cout << "Obfuscate ratio should between 0 and 1";
         return false;
-      } else if (NdiPCRatio == 0) {
-        return false;
       }
-      return ndiUsingPC(M);
-    } else if (NDIStrategy == MARKER) {
-      return ndiUsingMarker(M);
-    } else {
-      std::cout << "Error! Unknown NDI obfuscation strategy\n";
-      return false;
+      codeModified = ndiUsingPC(M) || codeModified;
     }
+
+    return codeModified;
   }
 
   bool Obfuscation::ndiUsingPC(Module &M) {
@@ -263,7 +270,13 @@ namespace ndi {
         }
 
         for (auto i: chosen) {
-          codeModified = replaceInstructionWithNdi(*i) || codeModified;
+          // Skip the instruction already obfuscated by hybrid
+          if (ndiObfuscatedInstructions.find(i) !=
+              ndiObfuscatedInstructions.end()) {
+            dbgs() << "Skip already obfed instruction";
+            continue;
+          }
+          codeModified = replaceInstructionWithNdi(*i, PC) || codeModified;
         }
       }
     }
@@ -282,7 +295,7 @@ namespace ndi {
 
     Function::user_iterator ui = markerFunction->user_begin();
     Function::user_iterator uiEnd = markerFunction->user_end();
-    while(ui != uiEnd) {
+    while (ui != uiEnd) {
       Instruction *inst = dyn_cast<Instruction>(*(ui++));
       unsigned int opcode = inst->getOpcode();
       if ((opcode != Instruction::Invoke) && (opcode != Instruction::Call)) {
@@ -308,18 +321,8 @@ namespace ndi {
         continue;
       }
       codeModified = useMarkerToNdi(inst) || codeModified;
-//      std::cout << "marker result: " << result << "\n";
     }
 
-//    for (Function &F: M.functions()) {
-//      for (Function::iterator FI = F.begin(); FI != F.end(); FI++) {
-//        BasicBlock &BB = *FI;
-//        BasicBlock::iterator i = BB.begin();
-//        while (i != BB.end()) {
-//          codeModified = useMarkerToNdi(i) || codeModified;
-//        }
-//      }
-//    }
     return codeModified;
   }
 
@@ -335,7 +338,8 @@ namespace ndi {
       std::string signature = instructionSignature(obfInstruction);
       if (!signature.compare("Others")) continue;
 
-      if (replaceInstructionWithNdi(obfInstruction)) {
+      if (replaceInstructionWithNdi(obfInstruction, MARKER)) {
+        ndiObfuscatedInstructions.insert(&obfInstruction);
         i->eraseFromParent();
         return true;
       } else {
@@ -345,22 +349,15 @@ namespace ndi {
     return false;
   }
 
-  bool Obfuscation::replaceInstructionWithNdi(Instruction &I) {
+  bool Obfuscation::replaceInstructionWithNdi(Instruction &I,
+                                              NDIStrategies strategy) {
     NdiInst *ndi;
     bool codeModified = false;
     int instructionIndex = getIndex(&I);
     unsigned int opcode = I.getOpcode();
     BinaryOperator *newMarker;
 
-    if (NDIStrategy == PC) {
-      // This program counter has been used. Skip this instruction.
-      // TODO how to make sure obfuscated all types of instructions at least once?
-      if (ndiUsedProgramCounters.find(instructionIndex) !=
-          ndiUsedProgramCounters.end()) {
-        return false;
-      }
-      ndiUsedProgramCounters.insert(instructionIndex);
-    } else if (NDIStrategy == MARKER) {
+    if (strategy == MARKER) {
       // Generate range to verify marker argument
       ConstantInt *diffVal = llvm::ConstantInt::get(
           IntegerType::getInt32Ty(I.getContext()),
@@ -370,7 +367,15 @@ namespace ndi {
           marker, diffVal);
       I.getParent()->getInstList().insert(I.getIterator(),
                                           (Instruction *) newMarker);
+    } else if (strategy == PC) {
+      // This program counter has been used. Skip this instruction.
+      if (ndiUsedProgramCounters.find(instructionIndex) !=
+          ndiUsedProgramCounters.end()) {
+        return false;
+      }
+      ndiUsedProgramCounters.insert(instructionIndex);
     }
+
 
     switch (opcode) {
       case Instruction::Alloca:
@@ -388,9 +393,9 @@ namespace ndi {
       case Instruction::IntToPtr:
       case Instruction::BitCast: {
         Value *Op1 = I.getOperand(0);
-        if (NDIStrategy == PC) {
+        if (strategy == PC) {
           ndi = NdiInst::Create(Op1, I.getType());
-        } else if (NDIStrategy == MARKER) {
+        } else if (strategy == MARKER) {
           ndi = NdiInst::Create(NDI_TYPE3, Op1, newMarker, I.getType());
         }
         codeModified = true;
@@ -399,10 +404,10 @@ namespace ndi {
       case Instruction::Store: {
         Value *Op1 = I.getOperand(0);
         Value *Op2 = I.getOperand(1);
-        if (NDIStrategy == PC) {
+        if (strategy == PC) {
           ndi = NdiInst::Create(NDI_TYPE2, Op1, Op2,
                                 Type::getVoidTy(Op1->getContext()));
-        } else if (NDIStrategy == MARKER) {
+        } else if (strategy == MARKER) {
           ndi = NdiInst::Create(Op1, Op2, newMarker,
                                 Type::getVoidTy(Op1->getContext()));
         }
@@ -414,13 +419,13 @@ namespace ndi {
         Value *Op1 = I.getOperand(0);
         Value *Op2 = I.getOperand(1);
         if (VectorType *vt = dyn_cast<VectorType>(Op1->getType())) {
-          if (NDIStrategy == PC) {
+          if (strategy == PC) {
             ndi = NdiInst::Create(NDI_TYPE2, Op1, Op2,
                                   VectorType::get(
                                       Type::getInt1Ty(
                                           Op1->getType()->getContext()),
                                       vt->getNumElements()));
-          } else if (NDIStrategy == MARKER) {
+          } else if (strategy == MARKER) {
             ndi = NdiInst::Create(Op1, Op2, newMarker,
                                   VectorType::get(
                                       Type::getInt1Ty(
@@ -428,11 +433,11 @@ namespace ndi {
                                       vt->getNumElements()));
           }
         } else {
-          if (NDIStrategy == PC) {
+          if (strategy == PC) {
             ndi = NdiInst::Create(NDI_TYPE2, Op1, Op2,
                                   Type::getInt1Ty(
                                       Op1->getType()->getContext()));
-          } else if (NDIStrategy == MARKER) {
+          } else if (strategy == MARKER) {
             ndi = NdiInst::Create(Op1, Op2, newMarker,
                                   Type::getInt1Ty(
                                       Op1->getType()->getContext()));
@@ -462,9 +467,9 @@ namespace ndi {
         // TODO Check Instruction::getName() usage.
         Value *Op1 = I.getOperand(0);
         Value *Op2 = I.getOperand(1);
-        if (NDIStrategy == PC) {
+        if (strategy == PC) {
           ndi = NdiInst::Create(NDI_TYPE2, Op1, Op2, Op1->getType());
-        } else if (NDIStrategy == MARKER) {
+        } else if (strategy == MARKER) {
           ndi = NdiInst::Create(Op1, Op2, newMarker, Op1->getType());
         }
         codeModified = true;
@@ -474,18 +479,18 @@ namespace ndi {
         CallInst &call = cast<CallInst>(I);
         if (call.getNumArgOperands() == 1) {
           Value *Op = call.getArgOperand(0);
-          if (NDIStrategy == PC) {
+          if (strategy == PC) {
             ndi = NdiInst::Create(Op, call.getType());
-          } else if (NDIStrategy == MARKER) {
+          } else if (strategy == MARKER) {
             ndi = NdiInst::Create(NDI_TYPE3, Op, newMarker, call.getType());
           }
 
         } else if (call.getNumArgOperands() == 2) {
           Value *Op1 = call.getArgOperand(0);
           Value *Op2 = call.getArgOperand(1);
-          if (NDIStrategy == PC) {
+          if (strategy == PC) {
             ndi = NdiInst::Create(NDI_TYPE2, Op1, Op2, call.getType());
-          } else if (NDIStrategy == MARKER) {
+          } else if (strategy == MARKER) {
             ndi = NdiInst::Create(Op1, Op2, newMarker, call.getType());
           }
         } else {
@@ -519,15 +524,15 @@ namespace ndi {
       std::string origin_string;
       raw_string_ostream originStream(origin_string);
       I.print(originStream);
-      generateInterpreterPatchNdi(patchFile, I);
+      generateInterpreterPatchNdi(patchFile, I, strategy);
       ReplaceInstWithInst(&I, ndi);
       std::string ndi_string;
       raw_string_ostream ndiStream(ndi_string);
       ndi->print(ndiStream);
-      if (NDIStrategy == PC) {
+      if (strategy == PC) {
         std::cout << "PC=" << instructionIndex << ": " << origin_string
                   << " =>" << ndi_string << "\n";
-      } else if (NDIStrategy == MARKER) {
+      } else if (strategy == MARKER) {
         std::cout << "NDI: " << origin_string
                   << " =>" << ndi_string << "\n";
       }
@@ -567,23 +572,29 @@ namespace ndi {
           "fmod(Src1.AggregateVal[i].DoubleVal, Src2.AggregateVal[i].DoubleVal);";
 
   void Obfuscation::generateInterpreterPatchNdi(std::FILE *patchFile,
-                                                Instruction &obfInst) {
+                                                Instruction &obfInst,
+                                                NDIStrategies strategy) {
     int opcode = obfInst.getOpcode();
 
-    if (NDIStrategy == PC) {
-      fprintf(patchFile, "case %d: {\n", getIndex(&obfInst));
-    } else if (NDIStrategy == MARKER) {
-      fprintf(patchFile, "else if ((marker >= %d) && (marker <= %d)) {\n",
-              ndiMarkerUpperLimit, (int)(ndiMarkerUpperLimit + (to - from)));
+    if (strategy == PC) {
+      fprintf(patchFile, "else if (index == %d) {\n", getIndex(&obfInst));
+    } else if (strategy == MARKER) {
+      fprintf(
+          patchFile,
+          "else if ((marker >= %d) && (marker <= %d)) {\n",
+          ndiMarkerUpperLimit,
+          (int) (ndiMarkerUpperLimit + (to - from)));
       ndiMarkerUpperLimit = ndiMarkerUpperLimit + (to - from) + 1;
     }
     if (obfInst.isBinaryOp()) {
       Type *Ty = obfInst.getOperand(0)->getType();
-      fprintf(patchFile, "ExecutionContext &SF = ECStack.back();\n"
-          "  Type *Ty    = I.getOperand(0)->getType();\n"
-          "  GenericValue Src1 = getOperandValue(I.getOperand(0), SF);\n"
-          "  GenericValue Src2 = getOperandValue(I.getOperand(1), SF);\n"
-          "  GenericValue R;");
+      fprintf(
+          patchFile,
+          "ExecutionContext &SF = ECStack.back();\n"
+              "  Type *Ty    = I.getOperand(0)->getType();\n"
+              "  GenericValue Src1 = getOperandValue(I.getOperand(0), SF);\n"
+              "  GenericValue Src2 = getOperandValue(I.getOperand(1), SF);\n"
+              "  GenericValue R;");
       if (Ty->isVectorTy()) {
         switch (opcode) {
           case Instruction::Add:
@@ -649,35 +660,41 @@ namespace ndi {
             break;
           case Instruction::FSub:
             if (cast<VectorType>(Ty)->getElementType()->isFloatTy()) {
-              fprintf(patchFile,
-                      BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
-                      "-");
+              fprintf(
+                  patchFile,
+                  BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
+                  "-");
             } else {
-              fprintf(patchFile,
-                      BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
-                      "-");
+              fprintf(
+                  patchFile,
+                  BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
+                  "-");
             }
             break;
           case Instruction::FMul:
             if (cast<VectorType>(Ty)->getElementType()->isFloatTy()) {
-              fprintf(patchFile,
-                      BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
-                      "*");
+              fprintf(
+                  patchFile,
+                  BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
+                  "*");
             } else {
-              fprintf(patchFile,
-                      BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
-                      "*");
+              fprintf(
+                  patchFile,
+                  BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
+                  "*");
             }
             break;
           case Instruction::FDiv:
             if (cast<VectorType>(Ty)->getElementType()->isFloatTy()) {
-              fprintf(patchFile,
-                      BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
-                      "/");
+              fprintf(
+                  patchFile,
+                  BINARY_FLOAT_VECTOR_FUNCTION_FORMAT,
+                  "/");
             } else {
-              fprintf(patchFile,
-                      BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
-                      "/");
+              fprintf(
+                  patchFile,
+                  BINARY_DOUBLE_VECTOR_FUNCTION_FORMAT,
+                  "/");
             }
             break;
           case Instruction::FRem:
@@ -693,19 +710,22 @@ namespace ndi {
       } else {
         switch (opcode) {
           case Instruction::Add:
-            fprintf(patchFile,
-                    "R.IntVal = Src1.IntVal + Src2.IntVal;"
-                        "SetValue(&I, R, SF);");
+            fprintf(
+                patchFile,
+                "R.IntVal = Src1.IntVal + Src2.IntVal;"
+                    "SetValue(&I, R, SF);");
             break;
           case Instruction::Sub:
-            fprintf(patchFile,
-                    "R.IntVal = Src1.IntVal - Src2.IntVal;"
-                        "SetValue(&I, R, SF);");
+            fprintf(
+                patchFile,
+                "R.IntVal = Src1.IntVal - Src2.IntVal;"
+                    "SetValue(&I, R, SF);");
             break;
           case Instruction::Mul:
-            fprintf(patchFile,
-                    "R.IntVal = Src1.IntVal * Src2.IntVal;"
-                        "SetValue(&I, R, SF);");
+            fprintf(
+                patchFile,
+                "R.IntVal = Src1.IntVal * Src2.IntVal;"
+                    "SetValue(&I, R, SF);");
             break;
           case Instruction::FAdd:
             fprintf(patchFile, "executeFAddInst(R, Src1, Src2, Ty);");
@@ -751,101 +771,117 @@ namespace ndi {
     } else {
       switch (opcode) {
         case Instruction::Alloca:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "Type *Ty = I.getType()->getElementType();"
-                      "unsigned NumElements = getOperandValue(I.getOperand(0), SF).IntVal.getZExtValue();"
-                      "unsigned TypeSize = (size_t)getDataLayout().getTypeAllocSize(Ty);"
-                      "unsigned MemToAlloc = std::max(1U, NumElements * TypeSize);"
-                      "void *Memory = malloc(MemToAlloc);"
-                      "GenericValue Result = PTOGV(Memory);"
-                      "SetValue(&I, Result, SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "Type *Ty = I.getType()->getElementType();"
+                  "unsigned NumElements = getOperandValue(I.getOperand(0), SF).IntVal.getZExtValue();"
+                  "unsigned TypeSize = (size_t)getDataLayout().getTypeAllocSize(Ty);"
+                  "unsigned MemToAlloc = std::max(1U, NumElements * TypeSize);"
+                  "void *Memory = malloc(MemToAlloc);"
+                  "GenericValue Result = PTOGV(Memory);"
+                  "SetValue(&I, Result, SF);");
           break;
         case Instruction::Load:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "GenericValue SRC = getOperandValue(I.getOperand(0), SF);"
-                      "GenericValue *Ptr = (GenericValue*)GVTOP(SRC);"
-                      "GenericValue Result;"
-                      "LoadValueFromMemory(Result, Ptr, I.getType());"
-                      "SetValue(&I, Result, SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "GenericValue SRC = getOperandValue(I.getOperand(0), SF);"
+                  "GenericValue *Ptr = (GenericValue*)GVTOP(SRC);"
+                  "GenericValue Result;"
+                  "LoadValueFromMemory(Result, Ptr, I.getType());"
+                  "SetValue(&I, Result, SF);");
           break;
         case Instruction::Trunc:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeTruncInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeTruncInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::ZExt:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeZExtInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeZExtInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::SExt:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeSExtInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeSExtInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::FPToUI:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeFPToUIInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeFPToUIInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::FPToSI:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeFPToSIInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeFPToSIInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::UIToFP:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeUIToFPInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeUIToFPInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::SIToFP:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeSIToFPInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeSIToFPInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::FPTrunc:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeFPTruncInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeFPTruncInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::FPExt:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeFPExtInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeFPExtInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::PtrToInt:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executePtrToIntInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executePtrToIntInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::IntToPtr:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeIntToPtrInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeIntToPtrInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::BitCast:
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "SetValue(&I, executeBitCastInst(I.getOperand(0), I.getType(), SF), SF);");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "SetValue(&I, executeBitCastInst(I.getOperand(0), I.getType(), SF), SF);");
           break;
         case Instruction::Store: {
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "GenericValue Val = getOperandValue(I.getOperand(0), SF);"
-                      "GenericValue SRC = getOperandValue(I.getOperand(1), SF);"
-                      "StoreValueToMemory(Val, (GenericValue *)GVTOP(SRC),"
-                      "I.getOperand(0)->getType());");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "GenericValue Val = getOperandValue(I.getOperand(0), SF);"
+                  "GenericValue SRC = getOperandValue(I.getOperand(1), SF);"
+                  "StoreValueToMemory(Val, (GenericValue *)GVTOP(SRC),"
+                  "I.getOperand(0)->getType());");
         }
           break;
         case Instruction::ICmp: {
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "Type *Ty    = I.getOperand(0)->getType();"
-                      "GenericValue Src1 = getOperandValue(I.getOperand(0), SF);"
-                      "GenericValue Src2 = getOperandValue(I.getOperand(1), SF);"
-                      "GenericValue R;   // Result");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "Type *Ty    = I.getOperand(0)->getType();"
+                  "GenericValue Src1 = getOperandValue(I.getOperand(0), SF);"
+                  "GenericValue Src2 = getOperandValue(I.getOperand(1), SF);"
+                  "GenericValue R;   // Result");
           ICmpInst &ICI = cast<ICmpInst>(obfInst);
           switch (ICI.getPredicate()) {
             case ICmpInst::ICMP_EQ:
@@ -885,17 +921,19 @@ namespace ndi {
         }
           break;
         case Instruction::FCmp: {
-          fprintf(patchFile,
-                  "ExecutionContext &SF = ECStack.back();"
-                      "Type *Ty    = I.getOperand(0)->getType();"
-                      "GenericValue Src1 = getOperandValue(I.getOperand(0), SF);"
-                      "GenericValue Src2 = getOperandValue(I.getOperand(1), SF);"
-                      "GenericValue R;   // Result");
+          fprintf(
+              patchFile,
+              "ExecutionContext &SF = ECStack.back();"
+                  "Type *Ty    = I.getOperand(0)->getType();"
+                  "GenericValue Src1 = getOperandValue(I.getOperand(0), SF);"
+                  "GenericValue Src2 = getOperandValue(I.getOperand(1), SF);"
+                  "GenericValue R;   // Result");
           FCmpInst &FCI = cast<FCmpInst>(obfInst);
           switch (FCI.getPredicate()) {
             case FCmpInst::FCMP_FALSE:
-              fprintf(patchFile,
-                      "R = executeFCMP_BOOL(Src1, Src2, Ty, false);");
+              fprintf(
+                  patchFile,
+                  "R = executeFCMP_BOOL(Src1, Src2, Ty, false);");
               break;
             case FCmpInst::FCMP_TRUE:
               fprintf(patchFile, "R = executeFCMP_BOOL(Src1, Src2, Ty, true);");
@@ -936,44 +974,43 @@ namespace ndi {
           break;
         case Instruction::Call: {
           CallInst &CI = cast<CallInst>(obfInst);
-          fprintf(patchFile,
-                  "SmallVector<Value*, 8> Args;"
-                      "CallInst *CI;"
-                      "Value *Callee;"
-                      "FunctionType *FTy;"
-                      "SmallVector<OperandBundleDef, 2> BundleList;"
-                      "Callee = FindFunctionNamed(\"%s\");"
-                      "FTy = cast<Function>(Callee)->getFunctionType();",
-                  cast<CallInst>(
-                      &obfInst)->getCalledFunction()->getName().str().c_str());
+          fprintf(
+              patchFile,
+              "SmallVector<Value*, 8> Args;"
+                  "CallInst *CI;"
+                  "Value *Callee;"
+                  "FunctionType *FTy;"
+                  "SmallVector<OperandBundleDef, 2> BundleList;"
+                  "Callee = FindFunctionNamed(\"%s\");"
+                  "FTy = cast<Function>(Callee)->getFunctionType();",
+              cast<CallInst>(
+                  &obfInst)->getCalledFunction()->getName().str().c_str());
           if (CI.getNumArgOperands() == 1) {
-            fprintf(patchFile,
-                    "Args.reserve(1);"
-                        "Args.push_back(I.getOperand(0));");
+            fprintf(
+                patchFile,
+                "Args.reserve(1);"
+                    "Args.push_back(I.getOperand(0));");
           } else if (CI.getNumArgOperands() == 2) {
-            fprintf(patchFile,
-                    "Args.reserve(2);"
-                        "Args.push_back(I.getOperand(0));"
-                        "Args.push_back(I.getOperand(1));");
+            fprintf(
+                patchFile,
+                "Args.reserve(2);"
+                    "Args.push_back(I.getOperand(0));"
+                    "Args.push_back(I.getOperand(1));");
           } else {
             dbgs() << "Invalid call instruction operands number\n";
           }
-          fprintf(patchFile,
-                  "CI = CallInst::Create(FTy, Callee, Args, BundleList);"
-                      "ReplaceInstWithInst(&I, CI);"
-                      "visitCallInst(*CI);");
+          fprintf(
+              patchFile,
+              "CI = CallInst::Create(FTy, Callee, Args, BundleList);"
+                  "ReplaceInstWithInst(&I, CI);"
+                  "visitCallInst(*CI);");
         }
           break;
         default:
           break;
       }
     }
-    if (NDIStrategy == PC) {
-      fprintf(patchFile, "} break;\n");
-    } else if (NDIStrategy == MARKER) {
-      fprintf(patchFile, "}\n");
-    }
-
+    fprintf(patchFile, "}\n");
   }
 }
 
@@ -1019,6 +1056,7 @@ std::string ndi::instructionSignature(Instruction &I) {
     case Instruction::UserOp2:
     case Instruction::VAArg:
     case Instruction::AddrSpaceCast:
+    case Instruction::Ndi:
       strStream << "Others";
       break;
       // No obfuscation instructions end
@@ -1164,5 +1202,6 @@ int ndi::Obfuscation::from = 0;
 int ndi::Obfuscation::to = 0;
 SignatureTypes ndi::Obfuscation::signatureMap;
 std::set<int> ndi::Obfuscation::ndiUsedProgramCounters;
+std::set<Instruction *> ndi::Obfuscation::ndiObfuscatedInstructions;
 static RegisterPass<ndi::Obfuscation> X("obfuscation",
                                         "Obfuscate instructions");
