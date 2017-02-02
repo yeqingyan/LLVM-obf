@@ -357,6 +357,11 @@ namespace ndi {
     unsigned int opcode = I.getOpcode();
     BinaryOperator *newMarker;
 
+    if ((I.getOpcode() == Instruction::Call) && 
+        cast<CallInst>(&I)->getCalledFunction() == NULL) {
+      return false;
+    }
+    
     if (strategy == MARKER) {
       // Generate range to verify marker argument
       ConstantInt *diffVal = llvm::ConstantInt::get(
