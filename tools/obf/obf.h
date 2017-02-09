@@ -6,21 +6,15 @@
 #include "llvm/IR/Module.h"
 
 using namespace llvm;
-
+// Format: OutputType(Input1Type, Input2Type)
 typedef const std::string InstSignature;
+// Get from function Instruction::getOpcodeName()
 typedef const std::string InstType;
+// Map of potential ndi instructions
 typedef std::map<InstType, std::vector<Instruction *>> InstMap;
 typedef std::pair<InstType, std::vector<Instruction *>> InstMapEntry;
 typedef std::map<InstSignature, InstMap> SignatureTypes;
 typedef std::pair<InstSignature, InstMap> SignatureTypesEntry;
-
-typedef struct {
-  LLVMContext *Context;
-  Module *M;
-  raw_fd_ostream *Out;
-} ObfFileModule;
-
-typedef std::map<std::string, ObfFileModule> SourceFileMap;
 
 enum NDIStrategies {
   NONE, PC, MARKER, HYBRID
@@ -33,50 +27,72 @@ int NDI_TYPE4 = 4;
 
 class Obfuscator {
 private:
-  // Input files
-  SourceFileMap sourceFiles;
-  // HashMap of instructions which have the same signatures.
-  SignatureTypes signatureMap;
+  Module* M;
+  Linker* L;
   FILE *patchFile;
+  LLVMContext Context;
+  // Patch file
+  raw_fd_ostream *Out;
+  SignatureTypes signatureMap;
 
 public:
   Obfuscator();
 
   ~Obfuscator();
 
+  // Load and link multiple files into one module
   void loadObfuscateFiles(std::string path);
 
+  // Find potential ndi instructions in teh module
   void analysis();
 
+  // Print analysis result
   void signatureSummary();
 
+  // Do obfuscation
   void runObfuscation();
 
-  void writeToFiles();
-  // NDI obf using PC
+  // Write obfuscated LLVM IR/bitcode file
+  void writeToFile();
+
+  // NDI obfuscation using PC
   void obfuscationPC();
 
-  // NDI obf using marker
+  // NDI obfuscation using marker
   void obfuscationMarker();
 
-  void analysisOnModule(Module &M);
+  // Parse marker condition
+  void parseMarker(Instruction &marker, int& from, int& to);
 
-  std::string getOutputFilePath(std::string path);
+  // Find LLVM IR/bitcode format files
+  void getSourceFiles(std::string path, std::list<std::string> &filePaths);
 
-  bool obfuscationMarkerOnInstruction(Instruction *inst);
+  // Obfuscate next potential instruction after marker instruction
+  bool obfuscationMarkerOnInstruction(Instruction *marker);
 
+  // Find next potential instruction after marker instruction
   Instruction *findNextPotentialNdiInstruction(Instruction *i);
 
+  // Write patch file for NDI instruction using program counter
+  void writePCInterpreterPatch(Instruction &obfInst);
+
+  // Write patch file for NDI instruction using marker
+  void writeMarkerInterpreterPatch(Instruction &obfInst, int from, int to);
+
+  // Write patch file body
   void writeInterpreterPatchBody(Instruction &obfInst);
 
-  NdiInst *generateNdiInstruction(Instruction &I, NDIStrategies strategy,
-                                  BinaryOperator *newMarker);
+  // Using instruction to generate NDI instruction
+  NdiInst *generateNdiInstruction(
+        Instruction &I,
+        NDIStrategies strategy,
+        BinaryOperator *newMarker);
 
+  // Get instruction signature
   std::string instructionSignature(Instruction &I);
 
-  int getIndex(Instruction *I);
-
-
+  // Get instruction program counter
+  int getPC(Instruction *I);
 
   bool isFile(const std::string path);
 
@@ -87,22 +103,16 @@ public:
   std::string instructionToString(Instruction *instruction);
 
   bool unobfuscatableInstruction(Instruction *I);
-
-  void parseMarker(Instruction &marker, int& from, int& to);
-
-  void writePCInterpreterPatch(Instruction &obfInst);
-
-  void writeMarkerInterpreterPatch(Instruction &obfInst, int from, int to);
 };
 
-
-// Used by hybrid strategy, if instruction already obfuscated by marker,
-// skip this instruction in pc.
+/* Used by hybrid strategy, if instruction already obfuscated by marker,
+   skip this instruction in pc */
 std::set<Instruction *> ndiObfuscatedInstructions;
+
 // Used to record the obfuscated instruction pc
 std::set<int> ndiUsedProgramCounters;
-// Used by marker
+
+// The upbound of marker range
 int ndiMarkerUpperLimit;
-//Value *marker;   // Marker argument
 
 #endif //LLVM_OBF2_H_H

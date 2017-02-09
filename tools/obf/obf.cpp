@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include <llvm/Bitcode/ReaderWriter.h>
+#include <llvm/Linker/Linker.h>
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/Module.h"
@@ -15,36 +16,52 @@
 
 using namespace llvm;
 
-static cl::opt<std::string>
-    InputPath(cl::Positional, cl::Required, cl::desc("<input bitcode file>"),
-              cl::value_desc("filename"));
+static cl::opt<std::string> InputPath(
+      cl::Positional,
+      cl::Required,
+      cl::desc("Input file/folder"),
+      cl::value_desc("input path"));
 
-static cl::opt<std::string>
-    OutputPath("o", cl::desc("Override output filename"),
-               cl::value_desc("filename"));
+static cl::opt<std::string> OutputPath(
+      "o",
+      cl::desc("Output filename"),
+      cl::value_desc("filename"));
 
-static cl::opt<bool>
-    OutputAssembly("S", cl::desc("Write output as LLVM assembly"));
-
+static cl::opt<bool> OutputAssembly(
+      "S",
+      cl::desc("Write output as LLVM assembly"));
 
 cl::opt<bool> AnalysisOnly("ndiAnalysis", cl::desc("Analysis code only"));
-cl::opt<float> NdiPCRatio("ndi-ratio",
-                          cl::desc("Ratio for NDI using program counter"),
-                          cl::init(1));
+
+cl::opt<float> NdiPCRatio(
+      "ndi-ratio",
+      cl::desc("Ratio for NDI using program counter, between 0 to 1"),
+      cl::init(1));
 
 cl::opt<NDIStrategies> NDIStrategy(
-    "strategy",
-    cl::desc("Choose NDI obfuscation strategy:"),
-    cl::values(
-        clEnumVal(NONE, "Disable obfuscation"),
-        clEnumVal(PC, "Using program counter"),
-        clEnumVal(MARKER, "Using marker function"),
-        clEnumVal(HYBRID, "Using marker function first, then using pc"), NULL),
-    cl::init(NONE));
+      "strategy",
+      cl::desc("Choose NDI obfuscation strategy:"),
+      cl::values(
+          clEnumVal(NONE, "Disable obfuscation"),
+          clEnumVal(PC, "Using program counter"),
+          clEnumVal(MARKER, "Using marker function"),
+          clEnumVal(HYBRID, "Using marker function first, then using pc"), NULL),
+      cl::init(NONE));
 
+Obfuscator::Obfuscator() : Context(){
+  M = new Module("obf", Context);
+  L = new Linker(*M);
 
-//region Obfuscator class
-Obfuscator::Obfuscator() {
+  // Create output file
+  llvm::sys::fs::create_directories(llvm::sys::path::parent_path(OutputPath));
+  std::error_code EC;
+  Out = new raw_fd_ostream(OutputPath, EC, sys::fs::F_RW);
+  if (EC) {
+    dbgs() << "Output file " + OutputPath + " : " + EC.message() + "\n";
+    llvm_unreachable("Unable to open file");
+  }
+
+  // Create patch file
   patchFile = fopen("./ndi-interpreter-patch.h", "w");
   if (NDIStrategy == PC) {
     fprintf(patchFile,
@@ -97,92 +114,66 @@ Obfuscator::Obfuscator() {
 }
 
 Obfuscator::~Obfuscator() {
-  fprintf(patchFile,
-          "else {\n"
-              "llvm_unreachable(\"Unhandled ndi instruction\");\n"
-              "}");
+  fprintf(
+      patchFile,
+      "else {\n"
+          "llvm_unreachable(\"Unhandled ndi instruction\");\n"
+          "}");
   std::cout << "Close patch file.";
   fclose(patchFile);
+  delete M;
+  delete L;
+  delete Out;
 }
 
-void Obfuscator::loadObfuscateFiles(std::string path) {
+// Find LLVM IR/bitcode format files
+void Obfuscator::getSourceFiles(std::string path, std::list<std::string> &filePaths) {
   if (isFile(path)) {
-    StringRef ext = llvm::sys::path::extension(path);
-    if ((ext == ".ll") || (ext == ".bc")) {
-      SMDiagnostic Err;
-      ObfFileModule ofm;
-
-      // Read file
-      LLVMContext *Context = new LLVMContext();
-      Context->setDiscardValueNames(false);
-      ofm.Context = Context;
-      SmallString<256> intputPathBuilder;
-      llvm::sys::path::append(intputPathBuilder, path);
-      llvm::sys::fs::make_absolute(intputPathBuilder);
-      llvm::sys::path::remove_dots(intputPathBuilder, true);
-      std::string inputPath = intputPathBuilder.str();
-      ofm.M = parseIRFile(inputPath, Err, *Context).release();
-      assert(ofm.M && "Unable to read file");
-
-      // Verify file
-      if (verifyModule(*(ofm.M), &errs())) {
-        errs() << path << ": error: input module is broken!\n";
-        return;
-      }
-
-      // Prepare output file
-      std::string outputPath = getOutputFilePath(path);
-      llvm::sys::fs::create_directories(
-          llvm::sys::path::parent_path(outputPath));
-      dbgs() << inputPath << " -> " << outputPath << "\n";
-      std::error_code EC;
-      ofm.Out = new raw_fd_ostream(outputPath, EC, sys::fs::F_RW);
-      if (EC) {
-        dbgs() << "Output file " + outputPath + " : " + EC.message() + "\n";
-        llvm_unreachable("Unable to open file");
-      }
-
-      sourceFiles.insert(std::pair<std::string, ObfFileModule>(path, ofm));
-    }
+    filePaths.push_back(path);
   } else if (isDir(path)) {
     std::error_code EC;
     for (llvm::sys::fs::recursive_directory_iterator F(path, EC), E;
          F != E && !EC;
          F.increment(EC)) {
-      if ((F->path() == path) || (F->path() == "..")) continue;
-      loadObfuscateFiles(F->path());
+      auto entry = F->path();
+      if (isFile(entry)) {
+        StringRef ext = llvm::sys::path::extension(entry);
+        if ((ext == ".ll") || (ext == ".bc")) {
+          filePaths.push_back(entry);
+        }
+      }
     }
   }
 }
 
-std::string Obfuscator::getOutputFilePath(std::string path) {
+// Load and link multiple files into one module
+void Obfuscator::loadObfuscateFiles(std::string path) {
+  std::list<std::string> filePaths;
+  getSourceFiles(path, filePaths);
 
-  SmallString<256> outputPathBuilder;
-  llvm::sys::path::append(outputPathBuilder, OutputPath);
-  if (isDir(InputPath)) {
-    std::string relativePath = path;
-    relativePath.erase(0, InputPath.length());
-    llvm::sys::path::append(outputPathBuilder, relativePath);
+  for (auto sourceFile : filePaths) {
+    // Load IR
+    SMDiagnostic Err;
+    std::unique_ptr<Module> subModule = getLazyIRFileModule(sourceFile, Err, Context, false);
+    if (!subModule) {
+      dbgs() << "Unable to read file " << sourceFile << "\n";
+    }
+
+    // Verify file
+    if (verifyModule(*subModule, &errs())) {
+      errs() << path << ": error: input module is broken!\n";
+      return;
+    }
+
+    // Link file
+    bool result = L->linkInModule(std::move(subModule), Linker::Flags::None);
+    assert(!result && "Unable to link file");
   }
-  if (OutputAssembly) {
-    llvm::sys::path::replace_extension(outputPathBuilder, "ll");
-  } else {
-    llvm::sys::path::replace_extension(outputPathBuilder, "bc");
-  }
-  llvm::sys::fs::make_absolute(outputPathBuilder);
-  llvm::sys::path::remove_dots(outputPathBuilder, true);
-  return outputPathBuilder.str();
 }
 
+// Find potential ndi instructions in teh module
 void Obfuscator::analysis() {
-  for (auto i: sourceFiles) {
-    analysisOnModule(*(i.second.M));
-  }
-}
-
-void Obfuscator::analysisOnModule(Module &M) {
-  // First run, get potential NDIs.
-  for (Function &F: M.functions()) {
+  for (Function &F: M->functions()) {
     for (BasicBlock &BB: F) {
       for (Instruction &instruction : BB) {
         InstSignature s = instructionSignature(instruction);
@@ -202,6 +193,7 @@ void Obfuscator::analysisOnModule(Module &M) {
   }
 }
 
+// Print analysis result
 void Obfuscator::signatureSummary() {
   std::cout << "--------------------------------------------------------\n"
             << std::setw(40) << std::left
@@ -246,6 +238,7 @@ void Obfuscator::signatureSummary() {
   std::cout << "\n";
 }
 
+// Do obfuscation
 void Obfuscator::runObfuscation() {
   if (AnalysisOnly) {
     assert(
@@ -257,35 +250,31 @@ void Obfuscator::runObfuscation() {
     obfuscationMarker();
   }
 
-
   if ((NDIStrategy == PC) || (NDIStrategy == HYBRID)) {
-    if ((NdiPCRatio > 1) || (NdiPCRatio <= 0)) {
-      std::cout << "Obfuscate ratio should between 0 and 1";
-      return;
-    }
+    assert(((NdiPCRatio <= 1) && (NdiPCRatio >= 0)) &&
+               "Obfuscate ratio should between 0 and 1");
     obfuscationPC();
   }
 }
 
+// NDI obfuscation using marker
 void Obfuscator::obfuscationMarker() {
-  for (auto i: sourceFiles) {
-    Module *M = i.second.M;
-    Function *markerFunction = M->getFunction("_Z6markeriii");
+  Function *markerFunction = M->getFunction("_Z6markeriii");
 
-    if (markerFunction == NULL) {
-      std::cout << "No marker function found!\n";
-      return;
-    }
+  if (markerFunction == NULL) {
+    std::cout << "No marker function found!\n";
+    return;
+  }
 
-    Function::user_iterator ui = markerFunction->user_begin();
-    Function::user_iterator uiEnd = markerFunction->user_end();
-    while (ui != uiEnd) {
-      Instruction *inst = dyn_cast<Instruction>(*(ui++));
-      if (!obfuscationMarkerOnInstruction(inst)) continue;
-    }
+  Function::user_iterator ui = markerFunction->user_begin();
+  Function::user_iterator uiEnd = markerFunction->user_end();
+  while (ui != uiEnd) {
+    Instruction *inst = dyn_cast<Instruction>(*(ui++));
+    if (!obfuscationMarkerOnInstruction(inst)) continue;
   }
 }
 
+// Parse marker condition
 void Obfuscator::parseMarker(Instruction &marker, int &from, int &to) {
   unsigned int opcode = marker.getOpcode();
   assert(((opcode == Instruction::Invoke) || (opcode == Instruction::Call)) &&
@@ -304,27 +293,31 @@ void Obfuscator::parseMarker(Instruction &marker, int &from, int &to) {
   assert((from <= to) && "From should smaller than To");
 }
 
-bool Obfuscator::obfuscationMarkerOnInstruction(Instruction *inst) {
+// Obfuscate next potential instruction after marker instruction
+bool Obfuscator::obfuscationMarkerOnInstruction(Instruction *marker) {
   int from, to;
 
-  parseMarker(*inst, from, to);
+  parseMarker(*marker, from, to);
 
-  Instruction *nextInst = findNextPotentialNdiInstruction(inst);
-  Instruction *END = &*(inst->getParent()->end());
+  Instruction *nextInst = findNextPotentialNdiInstruction(marker);
+  Instruction *endInst = &*(marker->getParent()->end());
 
-  while (nextInst != END) {
-    // Generate range to verify marker argument
+  while (nextInst != endInst) {
+    /* In order to avoid marker range conflict, insert a add/sub instruction to
+       modify marker range */
     ConstantInt *diffVal = llvm::ConstantInt::get(
         IntegerType::getInt32Ty(nextInst->getContext()),
         (uint64_t) std::abs(from - ndiMarkerUpperLimit));
     BinaryOperator *newMarker = BinaryOperator::Create(
         (from >= ndiMarkerUpperLimit) ? Instruction::Sub : Instruction::Add,
-        inst->getOperand(0),
+        marker->getOperand(0),
         diffVal);
-    nextInst->getParent()->getInstList().insert(nextInst->getIterator(),
-                                                (Instruction *) newMarker);
+    nextInst->getParent()->getInstList().insert(
+        nextInst->getIterator(),
+        (Instruction *) newMarker);
 
     NdiInst *ndiInst = generateNdiInstruction(*nextInst, MARKER, newMarker);
+    // Replace instruction with ndi instruction
     if (ndiInst != NULL) {
       printFunctionName(nextInst);
       std::cout << "NDI: " << instructionToString(nextInst) << " => ";
@@ -332,14 +325,15 @@ bool Obfuscator::obfuscationMarkerOnInstruction(Instruction *inst) {
       ReplaceInstWithInst(nextInst, ndiInst);
       std::cout << instructionToString(ndiInst) << "\n";
       ndiObfuscatedInstructions.insert(nextInst);
-      inst->eraseFromParent();
+      marker->eraseFromParent();
       break;
     }
-    nextInst = findNextPotentialNdiInstruction(inst);
+    nextInst = findNextPotentialNdiInstruction(marker);
   }
   return true;
 }
 
+// Find next potential instruction after marker instruction
 Instruction *Obfuscator::findNextPotentialNdiInstruction(Instruction *i) {
   BasicBlock::iterator obfIterator(i);
   BasicBlock::iterator end = i->getParent()->end();
@@ -358,6 +352,7 @@ Instruction *Obfuscator::findNextPotentialNdiInstruction(Instruction *i) {
   return &*obfIterator;
 }
 
+// Using instruction to generate NDI instruction
 NdiInst *
 Obfuscator::generateNdiInstruction(Instruction &I, NDIStrategies strategy,
                                    BinaryOperator *newMarker) {
@@ -459,6 +454,8 @@ Obfuscator::generateNdiInstruction(Instruction &I, NDIStrategies strategy,
       break;
     case Instruction::Call: {
       CallInst &call = cast<CallInst>(I);
+      Function *f = call.getCalledFunction();
+      f->setLinkage(GlobalValue::LinkageTypes::ExternalLinkage);
       if (call.getNumArgOperands() == 1) {
         Value *Op = call.getArgOperand(0);
         if (strategy == PC) {
@@ -498,7 +495,9 @@ void Obfuscator::printFunctionName(Instruction *origInst) {
   } else {
     currentName = abi::__cxa_demangle(
         origInst->getFunction()->getName().str().c_str(),
-        0, 0, &status);
+        0,
+        0,
+        &status);
   }
   if (strcmp(currentName, lastName)) {
     std::cout << "\n------------------------------\n";
@@ -515,9 +514,22 @@ std::string Obfuscator::instructionToString(Instruction *instruction) {
   return stringBuilder;
 }
 
-/*
-* Refer to lib/ExecutionEngine/Interpreter/Execution.cpp
-*/
+void Obfuscator::writeMarkerInterpreterPatch(Instruction &obfInst, int from,
+                                             int to) {
+  fprintf(
+      patchFile,
+      "else if ((marker >= %d) && (marker <= %d)) {\n",
+      ndiMarkerUpperLimit,
+      ndiMarkerUpperLimit + (to - from));
+  ndiMarkerUpperLimit = ndiMarkerUpperLimit + (to - from) + 1;
+  writeInterpreterPatchBody(obfInst);
+}
+
+void Obfuscator::writePCInterpreterPatch(Instruction &obfInst) {
+  fprintf(patchFile, "else if (index == %d) {\n", getPC(&obfInst));
+  writeInterpreterPatchBody(obfInst);
+}
+
 const char *BINARY_INTEGER_VECTOR_OPERATION_FORMAT =
     "for (unsigned i = 0; i < R.AggregateVal.size(); ++i)"
         "R.AggregateVal[i].IntVal = "
@@ -542,23 +554,9 @@ const char *BINARY_DOUBLE_VECTOR_REM_FORMAT =
     "for (unsigned i = 0; i < R.AggregateVal.size(); ++i)"
         "R.AggregateVal[i].DoubleVal ="
         "fmod(Src1.AggregateVal[i].DoubleVal, Src2.AggregateVal[i].DoubleVal);";
-
-void Obfuscator::writeMarkerInterpreterPatch(Instruction &obfInst, int from,
-                                             int to) {
-  fprintf(
-      patchFile,
-      "else if ((marker >= %d) && (marker <= %d)) {\n",
-      ndiMarkerUpperLimit,
-      ndiMarkerUpperLimit + (to - from));
-  ndiMarkerUpperLimit = ndiMarkerUpperLimit + (to - from) + 1;
-  writeInterpreterPatchBody(obfInst);
-}
-
-void Obfuscator::writePCInterpreterPatch(Instruction &obfInst) {
-  fprintf(patchFile, "else if (index == %d) {\n", getIndex(&obfInst));
-  writeInterpreterPatchBody(obfInst);
-}
-
+/*
+ * See lib/ExecutionEngine/Interpreter/Execution.cpp
+ */
 void Obfuscator::writeInterpreterPatchBody(Instruction &obfInst) {
   int opcode = obfInst.getOpcode();
   if (obfInst.isBinaryOp()) {
@@ -996,17 +994,19 @@ bool Obfuscator::isDir(const std::string path) {
   return llvm::sys::fs::is_directory(Twine(path));
 }
 
-int Obfuscator::getIndex(Instruction *I) {
-  int index = 0;
+// Get instruction program counter
+int Obfuscator::getPC(Instruction *I) {
+  int pc = 0;
   BasicBlock::iterator blockIterator = I->getParent()->begin();
   while ((blockIterator != I->getParent()->end()) &&
          ((&*blockIterator) != I)) {
-    index += 1;
+    pc += 1;
     blockIterator++;
   }
-  return index;
+  return pc;
 }
 
+// Get instruction signature, format: OutputType(Input1Type, Input2Type)
 std::string Obfuscator::instructionSignature(Instruction &I) {
   std::string signature;
   raw_string_ostream strStream(signature);
@@ -1052,11 +1052,12 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
     case Instruction::Ndi:
       strStream << "Others";
       break;
-      // No obfuscation instructions end
+    // No obfuscation instructions end
 
-      // Obfuscation instructions begin
-      // Unary instructions
-      // Signature: ReturnType(numberOfElementType)
+    // Obfuscation instructions begin
+    // Unary instructions
+
+    // Signature: ReturnType(numberOfElementType)
     case Instruction::Alloca: {
       AllocaInst &allocaInstruction = cast<AllocaInst>(I);
       // Return type (pointer)
@@ -1065,9 +1066,9 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       // Number of elements
       strStream << *(allocaInstruction.getArraySize()->getType());
       strStream << ")";
-    }
-      break;
-      // Signature: ReturnType(PointerType)
+    } break;
+
+    // Signature: ReturnType(PointerType)
     case Instruction::Load: {
       LoadInst &loadInst = cast<LoadInst>(I);
       // Return type
@@ -1075,11 +1076,10 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       strStream << "(";
       strStream << *(loadInst.getPointerOperand()->getType());
       strStream << ")";
-    }
-      break;
-      // Cast operators
-      // Signature TargetType(SrcType)
-      // Note: TargetType and SrcType are always different types
+    } break;
+    // Cast operators
+    // Signature TargetType(SrcType)
+    // Note: TargetType and SrcType are always different types
     case Instruction::Trunc:
     case Instruction::ZExt:
     case Instruction::SExt:
@@ -1097,10 +1097,9 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       strStream << "(";
       strStream << *(castInst.getSrcTy());
       strStream << ")";
-    }
-      break;
-      // Binary Instruction
-      // Signature: returnType(op0Type, op1Type)
+    } break;
+    // Binary Instruction
+    // Signature: returnType(op0Type, op1Type)
     case Instruction::Add:
     case Instruction::FAdd:
     case Instruction::Sub:
@@ -1129,10 +1128,9 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       // Operand 1 type
       strStream << *(binaryInstruction.getOperand(1)->getType());
       strStream << ")";
-    }
-      break;
-      // Store operation may store a constant or write a variable to memory.
-      // Signature: void(ValueType, PointerType)
+    } break;
+    // Store operation may store a constant or write a variable to memory.
+    // Signature: void(ValueType, PointerType)
     case Instruction::Store: {
       StoreInst &storeInst = cast<StoreInst>(I);
       strStream << *(storeInst.getType());
@@ -1141,9 +1139,8 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       strStream << ",";
       strStream << *(storeInst.getPointerOperand()->getType());
       strStream << ")";
-    }
-      break;
-      // Compare operators
+    } break;
+    // Compare operators
     case Instruction::ICmp:
     case Instruction::FCmp: {   //  ReturnType(Type1, Type2)
       CmpInst &cmpInst = cast<CmpInst>(I);
@@ -1153,9 +1150,8 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
       strStream << ",";
       strStream << *(cmpInst.getOperand(1)->getType());
       strStream << ")";
-    }
-      break;
-      // Call instruction have mutable parameters.
+    } break;
+    // Call instruction have mutable parameters.
     case Instruction::Call: {
       CallInst &callInst = cast<CallInst>(I);
       strStream << *(callInst.getType());
@@ -1166,9 +1162,8 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
         strStream << *callInst.getArgOperand(i)->getType();
       }
       strStream << ")";
-    }
-      break;
-      // Obfuscation instructions end
+    } break;
+    // Obfuscation instructions end
     default:
       strStream << "Unknown";
       break;
@@ -1177,13 +1172,15 @@ std::string Obfuscator::instructionSignature(Instruction &I) {
 }
 
 bool Obfuscator::unobfuscatableInstruction(Instruction *I) {
+  // Do not obfuscate a function if we don't know it's name.
   if (I->getOpcode() == Instruction::Call) {
     CallInst *call = cast<CallInst>(I);
-    return ((call->getCalledFunction() == NULL) || (call->getNumUses() == 1));
+    return call->getCalledFunction() == NULL;
   }
   return false;
 }
 
+// NDI obfuscation using PC
 void Obfuscator::obfuscationPC() {
   std::cout << "Obfuscation ratio " << NdiPCRatio;
   for (auto &s : signatureMap) {
@@ -1210,15 +1207,15 @@ void Obfuscator::obfuscationPC() {
           continue;
         }
         if (unobfuscatableInstruction(i)) continue;
-        if (ndiUsedProgramCounters.find(getIndex(i)) !=
+        if (ndiUsedProgramCounters.find(getPC(i)) !=
             ndiUsedProgramCounters.end()) {
           continue;
         }
-        ndiUsedProgramCounters.insert(getIndex(i));
+        ndiUsedProgramCounters.insert(getPC(i));
         NdiInst *ndiInst = generateNdiInstruction(*i, PC, NULL);
         if (ndiInst != NULL) {
           printFunctionName(i);
-          std::cout << "PC=" << getIndex(i) << ": " << instructionToString(i)
+          std::cout << "PC=" << getPC(i) << ": " << instructionToString(i)
                     << " => ";
           writePCInterpreterPatch(*i);
           ReplaceInstWithInst(i, ndiInst);
@@ -1230,18 +1227,15 @@ void Obfuscator::obfuscationPC() {
   }
 }
 
-void Obfuscator::writeToFiles() {
-  for (auto i: sourceFiles) {
-    if (OutputAssembly) {
-      i.second.M->print(*(i.second.Out), nullptr, false);
-    } else {
-      llvm::WriteBitcodeToFile(i.second.M, *(i.second.Out), true, nullptr,
-                               false);
-    }
-    i.second.Out->close();
+// Write obfuscated LLVM IR/bitcode file
+void Obfuscator::writeToFile() {
+  if (OutputAssembly) {
+    M->print(*(Out), nullptr, false);
+  } else {
+    llvm::WriteBitcodeToFile(M, *(Out), true, nullptr, false);
   }
+  Out->close();
 }
-//endregion
 
 int main(int argc, char **argv) {
   cl::ParseCommandLineOptions(argc, (const char *const *) argv);
@@ -1254,17 +1248,16 @@ int main(int argc, char **argv) {
   // analyze
   obf.analysis();
 
-  // Print signatures in code.
-  obf.signatureSummary();
-
   if (AnalysisOnly) {
+    // Print signatures in code.
+    obf.signatureSummary();
     return 0;
   }
   // Obfuscation
   obf.runObfuscation();
 
   // Write to file
-  obf.writeToFiles();
+  obf.writeToFile();
 
   return 0;
 }
