@@ -61,6 +61,12 @@ public:
   // NDI obfuscation using marker
   void obfuscationMarker();
 
+  // check if this is a call to interval marker
+  bool isIntervalMarker(Instruction &marker);
+
+  // check if this is a call to equal marker
+  bool isEqualMarker(Instruction &marker);
+
   // Parse marker condition
   void parseMarker(Instruction &marker, int& from, int& to);
 
@@ -68,7 +74,7 @@ public:
   void getSourceFiles(std::string path, std::list<std::string> &filePaths);
 
   // Obfuscate next potential instruction after marker instruction
-  bool obfuscationMarkerOnInstruction(Instruction *marker);
+  void obfuscationMarkerOnInstruction(Instruction *marker);
 
   // Find next potential instruction after marker instruction
   Instruction *findNextPotentialNdiInstruction(Instruction *i);

@@ -109,7 +109,7 @@ Hybrid strategy will use both program counter and marker strategies to obfuscate
 
 # How to use this Obfuscator
 ## 1. Obfuscate the code
-First, following the guide to download/compile the obfuscator. 
+First, following the guide in Wiki page to download/compile the obfuscator. 
 
 If you are using program counter strategy, just call the obfuscator directly, for example, the following command will obfuscate HelloWorld.ll to obf.ll, using program counter, and the tool will try to obfuscate 50% of all potential ndi insturctions.
 

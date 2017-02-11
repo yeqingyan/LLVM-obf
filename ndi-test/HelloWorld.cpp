@@ -21,9 +21,16 @@
 #include <stdio.h>
 
 // Marker test
-void marker(int x, int from, int to) __attribute__((nothrow));
-void marker(int x, int from, int to) {
+void assertInterval(int x, int from, int to) __attribute__((nothrow));
+void assertInterval(int x, int from, int to) {
   assert(( x >= from ) && ( x <= to ));
+  return;
+}
+
+// Marker test
+void assertEqual(int x, int v) __attribute__((nothrow));
+void assertEqual(int x, int v) {
+  assert(( x == v ));
   return;
 }
 
@@ -78,7 +85,7 @@ int main(int argc, char** argv)
 	// Set the box density to be non-zero, so it will be dynamic.
 	fixtureDef.density = 1.0f;
 
-	marker((int)(fixtureDef.density), 0, 4);
+	assertInterval((int)(fixtureDef.density), 0, 4);
 	// Override the default friction.
 	fixtureDef.friction = 0.3f;
 
@@ -95,7 +102,7 @@ int main(int argc, char** argv)
 	// This is our little game loop.
 	for (int32 i = 0; i < 60; ++i)
 	{
-		marker((int)bodyDef.gravityScale, 0, 2);
+		assertInterval((int)bodyDef.gravityScale, 0, 2);
 		// Instruct the world to perform a single step of simulation.
 		// It is generally best to keep the time step and iterations fixed.
 		world.Step(timeStep, velocityIterations, positionIterations);
@@ -103,7 +110,7 @@ int main(int argc, char** argv)
 		// Now print the position and angle of the body.
 		b2Vec2 position = body->GetPosition();
 		float32 angle = body->GetAngle();
-
+		assertEqual(velocityIterations, 6);
 		printf("%4.2f %4.2f %4.2f\n", position.x, position.y, angle);
 	}
 

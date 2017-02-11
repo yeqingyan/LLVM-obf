@@ -16,6 +16,9 @@
 
 using namespace llvm;
 
+const char* ASSERT_EQUAL_FUNC_NAME = "_Z11assertEqualii";
+const char* ASSERT_INTERVAL_FUNC_NAME = "_Z14assertIntervaliii";
+
 static cl::opt<std::string> InputPath(
       cl::Positional,
       cl::Required,
@@ -51,6 +54,8 @@ cl::opt<NDIStrategies> NDIStrategy(
 Obfuscator::Obfuscator() : Context(){
   M = new Module("obf", Context);
   L = new Linker(*M);
+
+  if (AnalysisOnly) return;
 
   // Create output file
   llvm::sys::fs::create_directories(llvm::sys::path::parent_path(OutputPath));
@@ -114,6 +119,10 @@ Obfuscator::Obfuscator() : Context(){
 }
 
 Obfuscator::~Obfuscator() {
+  delete M;
+  delete L;
+
+  if (AnalysisOnly) return;
   fprintf(
       patchFile,
       "else {\n"
@@ -121,8 +130,6 @@ Obfuscator::~Obfuscator() {
           "}");
   std::cout << "Close patch file.";
   fclose(patchFile);
-  delete M;
-  delete L;
   delete Out;
 }
 
@@ -259,42 +266,77 @@ void Obfuscator::runObfuscation() {
 
 // NDI obfuscation using marker
 void Obfuscator::obfuscationMarker() {
-  Function *markerFunction = M->getFunction("_Z6markeriii");
+  std::vector<Instruction*> markerInstructions;
 
-  if (markerFunction == NULL) {
-    std::cout << "No marker function found!\n";
-    return;
+  Function *markerFunction = M->getFunction(ASSERT_INTERVAL_FUNC_NAME);
+  if (markerFunction != NULL) {
+    for (Function::user_iterator ui = markerFunction->user_begin();
+         ui != markerFunction->user_end();
+         ui ++) {
+      markerInstructions.push_back(dyn_cast<Instruction>(*(ui)));
+    }
+  } else {
+    std::cout << "Could not find interval marker function\n";
   }
 
-  Function::user_iterator ui = markerFunction->user_begin();
-  Function::user_iterator uiEnd = markerFunction->user_end();
-  while (ui != uiEnd) {
-    Instruction *inst = dyn_cast<Instruction>(*(ui++));
-    if (!obfuscationMarkerOnInstruction(inst)) continue;
+  markerFunction = M->getFunction(ASSERT_EQUAL_FUNC_NAME);
+  if (markerFunction != NULL) {
+    for (Function::user_iterator ui = markerFunction->user_begin();
+         ui != markerFunction->user_end();
+         ui ++) {
+      markerInstructions.push_back(dyn_cast<Instruction>(*(ui)));
+    }
+  } else {
+    std::cout << "Could not find equal marker function\n";
   }
+
+  for (auto marker: markerInstructions) {
+    obfuscationMarkerOnInstruction(marker);
+  }
+}
+
+bool Obfuscator::isIntervalMarker(Instruction &marker) {
+  CallInst &call = cast<CallInst>(marker);
+  Function *f = call.getCalledFunction();
+  return f->getName().equals(ASSERT_INTERVAL_FUNC_NAME);
+}
+
+bool Obfuscator::isEqualMarker(Instruction &marker) {
+  CallInst &call = cast<CallInst>(marker);
+  Function *f = call.getCalledFunction();
+  return f->getName().equals(ASSERT_EQUAL_FUNC_NAME);
 }
 
 // Parse marker condition
 void Obfuscator::parseMarker(Instruction &marker, int &from, int &to) {
   unsigned int opcode = marker.getOpcode();
-  assert(((opcode == Instruction::Invoke) || (opcode == Instruction::Call)) &&
-         "Unknown instruction");
+  assert((opcode == Instruction::Call) && "Marker instruction shoule be call");
 
-  Value *op1 = marker.getOperand(1);
-  Value *op2 = marker.getOperand(2);
+  Value *op1, *op2;
+  if (isIntervalMarker(marker)) {
+    op1 = marker.getOperand(1);
+    op2 = marker.getOperand(2);
+    // op1 and op2 should be constant int and op1 < op2
+    assert((isa<ConstantInt>(op1) && isa<ConstantInt>(op2)) &&
+           "From/To should both be constant int!");
 
-  // op1 and op2 should be constant int and op1 < op2
-  assert((isa<ConstantInt>(op1) && isa<ConstantInt>(op2)) &&
-         "From/To should both be constant int!");
+    from = (int) cast<ConstantInt>(op1)->getSExtValue();
+    to = (int) cast<ConstantInt>(op2)->getSExtValue();
+    assert((from < to) && "From should smaller than To");
+  } else if (isEqualMarker(marker)) {
+    op1 = marker.getOperand(1);
+    // op1 shouble be constant int
+    assert((isa<ConstantInt>(op1)) && "From should be constant int!");
 
-  from = (int) cast<ConstantInt>(op1)->getSExtValue();
-  to = (int) cast<ConstantInt>(op2)->getSExtValue();
-
-  assert((from <= to) && "From should smaller than To");
+    from = (int) cast<ConstantInt>(op1)->getSExtValue();
+    to = from;
+  } else {
+    assert("Unknown marker function");
+  }
 }
 
 // Obfuscate next potential instruction after marker instruction
-bool Obfuscator::obfuscationMarkerOnInstruction(Instruction *marker) {
+void Obfuscator::obfuscationMarkerOnInstruction(Instruction *marker) {
   int from, to;
 
   parseMarker(*marker, from, to);
@@ -330,7 +372,6 @@ bool Obfuscator::obfuscationMarkerOnInstruction(Instruction *marker) {
     }
     nextInst = findNextPotentialNdiInstruction(marker);
   }
-  return true;
 }
 
 // Find next potential instruction after marker instruction
@@ -454,8 +495,12 @@ Obfuscator::generateNdiInstruction(Instruction &I, NDIStrategies strategy,
       break;
     case Instruction::Call: {
       CallInst &call = cast<CallInst>(I);
-      Function *f = call.getCalledFunction();
-      f->setLinkage(GlobalValue::LinkageTypes::ExternalLinkage);
+      /* Note: It might happen that after obfuscation, the implementation of
+       * obfuscated function might got removed by LLVM at the link time, if that
+       * is the case please uncomment the following code to set function to
+       * external function before obfuscation to avoid function got removed. */
+      //Function *f = call.getCalledFunction();
+      //if->setLinkage(GlobalValue::LinkageTypes::ExternalLinkage);
       if (call.getNumArgOperands() == 1) {
         Value *Op = call.getArgOperand(0);
         if (strategy == PC) {
@@ -514,13 +559,22 @@ std::string Obfuscator::instructionToString(Instruction *instruction) {
   return stringBuilder;
 }
 
-void Obfuscator::writeMarkerInterpreterPatch(Instruction &obfInst, int from,
-                                             int to) {
-  fprintf(
-      patchFile,
-      "else if ((marker >= %d) && (marker <= %d)) {\n",
-      ndiMarkerUpperLimit,
-      ndiMarkerUpperLimit + (to - from));
+void Obfuscator::writeMarkerInterpreterPatch(
+    Instruction &obfInst,
+    int from,
+    int to) {
+  if (from == to) {
+    fprintf(
+        patchFile,
+        "else if (marker == %d) {\n",
+        ndiMarkerUpperLimit);
+  } else {
+    fprintf(
+        patchFile,
+        "else if ((marker >= %d) && (marker <= %d)) {\n",
+        ndiMarkerUpperLimit,
+        ndiMarkerUpperLimit + (to - from));
+  }
   ndiMarkerUpperLimit = ndiMarkerUpperLimit + (to - from) + 1;
   writeInterpreterPatchBody(obfInst);
 }
