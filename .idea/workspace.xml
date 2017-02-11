@@ -865,75 +865,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65bf46cb-e50b-4b01-a8e3-9f4f0201b6fe" name="Default" comment="Add obfucation tool obf.  Accept input file or directory, output single obfuscated file.">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/README.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/Transforms/Obfuscation/CMakeLists.txt" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/lib/Transforms/Obfuscation/Obfuscation.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/link.sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2BlockAllocator.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Body.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Body.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2BroadPhase.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2EdgeAndCircleContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2EdgeAndPolygonContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2EdgeShape.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Fixture.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Fixture.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2FrictionJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2GearJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Island.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Island.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Joint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Math.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2MotorJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2MouseJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2PolygonAndCircleContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2PolygonContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2PolygonShape.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2PrismaticJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2PulleyJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2RevoluteJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Rope.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2RopeJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Settings.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2StackAllocator.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2TimeOfImpact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2Timer.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2WeldJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2WheelJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2World.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2World.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2WorldCallbacks.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/b2WorldCallbacks.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/dir1/b2Distance.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/dir1/b2DistanceJoint.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/dir1/b2Draw.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-mixed/dir1/b2DynamicTree.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/HelloWorld.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2ChainAndCircleContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2ChainAndPolygonContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2ChainShape.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2CircleContact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2CircleShape.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2CollideCircle.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2CollideEdge.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2CollidePolygon.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2Collision.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2Contact.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2ContactManager.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/ll-only/b2ContactSolver.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test-project/no-ll/b2ContactManager.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test.bc" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ndi-test/test.ll" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/obf.md" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/include/llvm/ndi-interpreter-patch.h" afterPath="$PROJECT_DIR$/include/llvm/ndi-interpreter-patch.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/Transforms/CMakeLists.txt" afterPath="$PROJECT_DIR$/lib/Transforms/CMakeLists.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld.cpp" afterPath="$PROJECT_DIR$/ndi-test/HelloWorld.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ndi-test/HelloWorld.ll" afterPath="$PROJECT_DIR$/ndi-test/HelloWorld.ll" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/obf/obf.cpp" afterPath="$PROJECT_DIR$/tools/obf/obf.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tools/obf/obf.h" afterPath="$PROJECT_DIR$/tools/obf/obf.h" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -948,40 +880,7 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="obf.cpp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tools/obf/obf.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="53" column="12" lean-forward="false" selection-start-line="53" selection-start-column="12" selection-end-line="53" selection-end-column="12" />
-              <folding>
-                <marker date="1486781756962" expanded="true" signature="1584:4637" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="obf.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tools/obf/obf.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="197">
-              <caret line="38" column="8" lean-forward="false" selection-start-line="38" selection-start-column="8" selection-end-line="38" selection-end-column="8" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LinkModules.cpp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/Linker/LinkModules.cpp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="412">
-              <caret line="491" column="0" lean-forward="false" selection-start-line="491" selection-start-column="0" selection-end-line="491" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -1172,7 +1071,7 @@
       <recent name="$PROJECT_DIR$/tools/obf2" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.lli-llvmIR">
+  <component name="RunManager" selected="Application.llvm-link">
     <configuration default="true" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="check-all" CONFIG_NAME="Debug" TEST_MODE="SUITE_TEST">
       <envs />
       <method />
@@ -4560,7 +4459,7 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="false" name="llvm-link" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-S ./test-project/ll-mixed/b2BlockAllocator.ll  ./test-project/ll-mixed/b2Body.ll  ./test-project/ll-mixed/b2BroadPhase.ll  ./test-project/ll-mixed/b2EdgeAndCircleContact.ll  ./test-project/ll-mixed/b2EdgeAndPolygonContact.ll  ./test-project/ll-mixed/b2EdgeShape.ll  ./test-project/ll-mixed/b2Fixture.ll  ./test-project/ll-mixed/b2FrictionJoint.ll  ./test-project/ll-mixed/b2GearJoint.ll  ./test-project/ll-mixed/b2Island.ll  ./test-project/ll-mixed/b2Joint.ll  ./test-project/ll-mixed/b2Math.ll  ./test-project/ll-mixed/b2MotorJoint.ll  ./test-project/ll-mixed/b2MouseJoint.ll  ./test-project/ll-mixed/b2PolygonAndCircleContact.ll  ./test-project/ll-mixed/b2PolygonContact.ll  ./test-project/ll-mixed/b2PolygonShape.ll  ./test-project/ll-mixed/b2PrismaticJoint.ll  ./test-project/ll-mixed/b2PulleyJoint.ll  ./test-project/ll-mixed/b2RevoluteJoint.ll  ./test-project/ll-mixed/b2RopeJoint.ll  ./test-project/ll-mixed/b2Rope.ll  ./test-project/ll-mixed/b2Settings.ll  ./test-project/ll-mixed/b2StackAllocator.ll  ./test-project/ll-mixed/b2TimeOfImpact.ll  ./test-project/ll-mixed/b2Timer.ll  ./test-project/ll-mixed/b2WeldJoint.ll  ./test-project/ll-mixed/b2WheelJoint.ll  ./test-project/ll-mixed/b2WorldCallbacks.ll  ./test-project/ll-mixed/b2World.ll ./test-project/ll-only/b2ChainAndCircleContact.ll  ./test-project/ll-only/b2ChainAndPolygonContact.ll  ./test-project/ll-only/b2ChainShape.ll  ./test-project/ll-only/b2CircleContact.ll  ./test-project/ll-only/b2CircleShape.ll  ./test-project/ll-only/b2CollideCircle.ll  ./test-project/ll-only/b2CollideEdge.ll  ./test-project/ll-only/b2CollidePolygon.ll  ./test-project/ll-only/b2Collision.ll  ./test-project/ll-only/b2Contact.ll  ./test-project/ll-only/b2ContactManager.ll  ./test-project/ll-only/b2ContactSolver.ll  ./test-project/ll-only/HelloWorld.ll ./test-project/ll-mixed/dir1/b2DistanceJoint.ll  ./test-project/ll-mixed/dir1/b2Distance.ll  ./test-project/ll-mixed/dir1/b2Draw.ll  ./test-project/ll-mixed/dir1/b2DynamicTree.ll -o t1.ll" WORKING_DIR="file://$PROJECT_DIR$/ndi-test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="llvm-link" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="llvm-link">
+    <configuration default="false" name="llvm-link" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" PROJECT_NAME="LLVM" TARGET_NAME="llvm-link" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="LLVM" RUN_TARGET_NAME="llvm-link">
       <envs />
       <method />
     </configuration>
@@ -5689,7 +5588,7 @@
       <workItem from="1486272376496" duration="14275000" />
       <workItem from="1486450555485" duration="4640000" />
       <workItem from="1486620274975" duration="3416000" />
-      <workItem from="1486773592492" duration="14157000" />
+      <workItem from="1486773592492" duration="14600000" />
     </task>
     <task id="LOCAL-00001" summary="Update marker function name&#10;Add nothrow attribute to marker() function">
       <created>1484641507671</created>
@@ -5730,7 +5629,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="181206000" />
+    <option name="totallyTimeSpent" value="181649000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -5751,7 +5650,7 @@
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5510204" sideWeight="0.501845" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25134265" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5510204" sideWeight="0.49815497" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5510204" sideWeight="0.49815497" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24986821" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32975295" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -6189,11 +6088,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/Linker/LinkModules.cpp">
+    <entry file="file://$PROJECT_DIR$/tools/obf/obf.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="412">
-          <caret line="491" column="0" lean-forward="false" selection-start-line="491" selection-start-column="0" selection-end-line="491" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="334">
+          <caret line="53" column="12" lean-forward="false" selection-start-line="53" selection-start-column="12" selection-end-line="53" selection-end-column="12" />
+          <folding>
+            <marker date="1486781756962" expanded="true" signature="1584:4637" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -6205,13 +6106,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/obf/obf.cpp">
+    <entry file="file://$PROJECT_DIR$/lib/Linker/LinkModules.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="53" column="12" lean-forward="false" selection-start-line="53" selection-start-column="12" selection-end-line="53" selection-end-column="12" />
-          <folding>
-            <marker date="1486781756962" expanded="true" signature="1584:4637" ph="..." />
-          </folding>
+        <state relative-caret-position="412">
+          <caret line="491" column="0" lean-forward="false" selection-start-line="491" selection-start-column="0" selection-end-line="491" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
