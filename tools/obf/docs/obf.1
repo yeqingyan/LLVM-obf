@@ -1,0 +1,66 @@
+.TH obf 1 
+.SH NAME
+obf \- LLVM IR/bitcode obfuscator
+.SH SYNOPSIS
+For analysis only
+.br
+.B obf
+.B \-\-ndiAnalysis
+.IR infile/infolder 
+.LP
+Using program counter strategy
+.br
+.B obf
+[\fB-S\fR] 
+.B --strategy=PC 
+[\fB--ndi-ratio=\fIROBFUSCATE_PERCENTAGE\fR]
+.B -o 
+.IR outfile 
+.IR infile/infolder 
+.LP
+Using marker strategy
+.br
+.B obf
+[\fB-S\fR] 
+.B --strategy=MARKER 
+.B -o 
+.IR outfile 
+.IR infile/infolder 
+.LP
+Using hybrid strategy
+.br
+.B obf
+[\fB-S\fR] 
+.B --strategy=HYBRID 
+[\fB--ndi-ratio=\fIROBFUSCATE_PERCENTAGE\fR]
+.B -o 
+.IR outfile 
+.IR infile/infolder 
+
+.SH DESCRIPTION
+.B opt
+obfuscate one or multiple LLVM IR/bitcode files, output an single obfuscated file and a patch file for lli. The patch file is called "ndi-interpreter-patch.h" and stored in current folder.
+
+.SH OPTIONS
+.TP 
+.B \-\-ndiAnalysis
+Run analysis only, do not do obfuscation
+.TP
+.B \-S
+Change the output format to LLVM IR, otherwise output will write in bitcode format.
+.TP
+.B --strategy=[PC|MARKER|HYBRID]
+Choose obfuscation strategy
+.TP
+\fB--ndi-ratio=\fIROBFUSCATE_PERCENTAGE\fR
+This option can only be used with 
+.B PC
+or
+.B HYBRID
+strategy, the OBFUSCATE_PERCENTAGE must between 0 and 1(included).
+.TP
+.B -o 
+Output file path
+.SH SEE ALSO
+Detailed document at
+.IR https://github.com/yeqingyan/LLVM-obf
