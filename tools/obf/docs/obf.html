@@ -1,0 +1,143 @@
+<!-- Creator     : groff version 1.22.3 -->
+<!-- CreationDate: Sun Feb 12 05:40:07 2017 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta name="generator" content="groff -Thtml, see www.gnu.org">
+<meta http-equiv="Content-Type" content="text/html; charset=US-ASCII">
+<meta name="Content-Style" content="text/css">
+<style type="text/css">
+       p       { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       pre     { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       table   { margin-top: 0; margin-bottom: 0; vertical-align: top }
+       h1      { text-align: center }
+</style>
+<title>obf</title>
+
+</head>
+<body>
+
+<h1 align="center">obf</h1>
+
+<a href="#NAME">NAME</a><br>
+<a href="#SYNOPSIS">SYNOPSIS</a><br>
+<a href="#DESCRIPTION">DESCRIPTION</a><br>
+<a href="#OPTIONS">OPTIONS</a><br>
+<a href="#SEE ALSO">SEE ALSO</a><br>
+
+<hr>
+
+
+<h2>NAME
+<a name="NAME"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">obf &minus;
+LLVM IR/bitcode obfuscator</p>
+
+<h2>SYNOPSIS
+<a name="SYNOPSIS"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">For analysis
+only <b><br>
+obf &minus;&minus;ndiAnalysis</b> <i>infile/infolder</i></p>
+
+<p style="margin-left:11%; margin-top: 1em">Using program
+counter strategy <b><br>
+obf</b> [<b>-S</b>] <b>--strategy=PC</b>
+[<b>--ndi-ratio=</b><i>ROBFUSCATE_PERCENTAGE</i>] <b>-o</b>
+<i>outfile infile/infolder</i></p>
+
+<p style="margin-left:11%; margin-top: 1em">Using marker
+strategy <b><br>
+obf</b> [<b>-S</b>] <b>--strategy=MARKER -o</b> <i>outfile
+infile/infolder</i></p>
+
+<p style="margin-left:11%; margin-top: 1em">Using hybrid
+strategy <b><br>
+obf</b> [<b>-S</b>] <b>--strategy=HYBRID</b>
+[<b>--ndi-ratio=</b><i>ROBFUSCATE_PERCENTAGE</i>] <b>-o</b>
+<i>outfile infile/infolder</i></p>
+
+<h2>DESCRIPTION
+<a name="DESCRIPTION"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><i><b>opt</b></i>
+obfuscate one or multiple LLVM IR/bitcode files, output an
+single obfuscated file and a patch file for lli. The patch
+file is called &quot;ndi-interpreter-patch.h&quot; and
+stored in current folder.</p>
+
+<h2>OPTIONS
+<a name="OPTIONS"></a>
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b>&minus;&minus;ndiAnalysis</b></p>
+
+<p style="margin-left:22%;">Run analysis only, do not do
+obfuscation</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p><b>&minus;S</b></p></td>
+<td width="8%"></td>
+<td width="78%">
+
+
+<p>Change the output format to LLVM IR, otherwise output
+will write in bitcode format.</p></td></tr>
+</table>
+
+
+<p style="margin-left:11%;"><b>--strategy=[PC|MARKER|HYBRID]</b></p>
+
+<p style="margin-left:22%;">Choose obfuscation strategy</p>
+
+
+<p style="margin-left:11%;"><b>--ndi-ratio=</b><i>ROBFUSCATE_PERCENTAGE</i></p>
+
+<p style="margin-left:22%;">This option can only be used
+with <b>PC</b> or <b>HYBRID</b> strategy, the
+OBFUSCATE_PERCENTAGE must between 0 and 1(included).</p>
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<tr valign="top" align="left">
+<td width="11%"></td>
+<td width="3%">
+
+
+<p><b>-o</b></p></td>
+<td width="8%"></td>
+<td width="24%">
+
+
+<p>Output file path</p></td>
+<td width="54%">
+</td></tr>
+</table>
+
+<h2>SEE ALSO
+<a name="SEE ALSO"></a>
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Detailed
+document at <i>https://github.com/yeqingyan/LLVM-obf</i></p>
+<hr>
+</body>
+</html>
